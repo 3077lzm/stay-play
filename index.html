@@ -570,10 +570,10 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
         <div>
           <div class="hero-kick">REVIEW · 间隔复习</div>
           <div class="big" id="dueBig">0<i>张</i></div>
-          <div class="lab">今日待复习</div>
+          <div class="lab">今日待学</div>
         </div>
         <div class="ristats">
-          <div class="ristat"><div class="v" id="rNew">0</div><div class="k">新卡</div></div>
+          <div class="ristat"><div class="v" id="rNew">0</div><div class="k">今日新词</div></div>
           <div class="ristat"><div class="v" id="rMastered">0</div><div class="k">已掌握</div></div>
           <div class="ristat"><div class="v" id="rTotal">0</div><div class="k">总卡片</div></div>
         </div>
@@ -585,9 +585,9 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
       </div>
 
       <div class="deckbar" id="deckbar"></div>
-      <input id="cardSearch" class="search" placeholder="搜索卡片…">
+      <input id="cardSearch" class="search" placeholder="搜索单词 / 释义…">
 
-      <div class="sec"><span class="sec-k">卡片</span><span class="sec-rule"></span><span class="sec-n" id="cardCount"></span></div>
+      <div class="sec"><span class="sec-k">词库</span><span class="sec-rule"></span><span class="sec-n" id="cardCount"></span></div>
       <div class="rcards" id="cardList"></div>
 
       <div class="rv-acts">
@@ -657,8 +657,16 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
           <label class="sw"><input type="checkbox" id="darkSwitch"><span></span></label>
         </div>
         <div class="srow">
-          <div><div class="srow-t">每日新卡上限</div><div class="srow-d">避免一次涌入太多新卡</div></div>
-          <input type="number" id="newCapInput" min="0" max="200" class="numinput">
+          <div><div class="srow-t">每天新词</div><div class="srow-d">每天最多学多少个新词</div></div>
+          <input type="number" id="planNew" min="0" max="200" class="numinput">
+        </div>
+        <div class="srow">
+          <div><div class="srow-t">每天复习上限</div><div class="srow-d">每天最多复习多少张旧卡</div></div>
+          <input type="number" id="planReview" min="0" max="500" class="numinput">
+        </div>
+        <div class="srow">
+          <div><div class="srow-t">每批张数</div><div class="srow-d">一批背完才弹下一批</div></div>
+          <input type="number" id="planBatch" min="5" max="100" class="numinput">
         </div>
       </div>
 
@@ -1028,9 +1036,22 @@ let cards = loadJSON(CARDS_KEY, []);
 let editingCard = null;
 function saveCards(){ saveJSON(CARDS_KEY, cards); }
 
+function nextSeq(){
+  let m = 0;
+  for(let i=0;i<cards.length;i++){ const s = cards[i].seq || 0; if(s > m) m = s; }
+  return m + 1;
+}
+function ensureSeq(){
+  if(!cards.length) return;
+  if(cards.some(c=> !c.seq)){
+    cards.sort((a,b)=> (a.created||0)-(b.created||0));
+    cards.forEach((c,i)=> c.seq = i+1);
+    saveCards();
+  }
+}
 function makeCard(deck, front, back){
   return { id:"k"+Date.now()+Math.floor(Math.random()*9999),
-    deck: deck || "默认", front:front, back:back,
+    deck: deck || "默认", front:front, back:back, seq: nextSeq(),
     reps:0, lapses:0, ease:2.5, interval:0,
     due: todayKey(), created: Date.now(), lastReview: null };
 }
@@ -1888,7 +1909,7 @@ function buildStats(){
   $("#stCet").textContent = de >= 0 ? de : "—";
   $("#memTotal").textContent = cards.length;
   $("#memMastered").textContent = masteredCount();
-  $("#memDue").textContent = dueList().length;
+  $("#memDue").textContent = todayRemain();
 
   buildProgress();
   renderDates();
@@ -1961,7 +1982,7 @@ function buildReport(){
   s += " 当前连续 <b>" + computeStreak() + "</b> 天，历史最长 <b>" + longestStreak() + "</b> 天。";
   if(ws.pct < 50 && ws.total > 0) s += " 本周整体偏松，周末补一次整块时间。";
   else if(ws.pct >= 80) s += " 节奏稳，保持这个强度。";
-  if(cards.length) s += " 记忆卡片待复习 <b>" + dueList().length + "</b> 张。";
+  if(cards.length) s += " 记忆卡片今日还要学 <b>" + todayRemain() + "</b> 张。";
 
   $("#reportText").innerHTML = s;
   $("#reportText").dataset.plain = s.replace(/<[^>]+>/g, "");
@@ -2009,20 +2030,20 @@ const SEED_CARDS = [
 function renderTodayReview(){
   const row = $("#reviewRow");
   if(!row) return;
-  const due = dueList().length;
+  const remain = todayRemain();
   row.innerHTML =
     '<span class="rr-icon">' + icon('cards') + '</span>' +
     '<div class="rr-body"><div class="rr-t">间隔复习</div><div class="rr-d">' +
-      (due ? ('今日待复习 ' + due + ' 张') : '今天没有待复习') + '</div></div>' +
-    (due ? '<span class="rr-due">' + due + '</span>' : '') +
-    '<span class="rr-go">' + (due ? '开始' : '') + icon('arrow') + '</span>';
+      (remain ? ('今天还要学 ' + remain + ' 张') : '今天的量已完成') + '</div></div>' +
+    (remain ? '<span class="rr-due">' + remain + '</span>' : '') +
+    '<span class="rr-go">' + (remain ? '开始' : '') + icon('arrow') + '</span>';
 }
 
 function updateReviewBadge(){
   const tab = document.querySelector('#tabbar .tab[data-view="review"]');
   if(!tab) return;
   let b = tab.querySelector('.navbadge');
-  const due = dueList().length;
+  const due = todayRemain();
   if(due > 0){
     if(!b){ b = document.createElement('span'); b.className = 'navbadge'; tab.appendChild(b); }
     b.textContent = due > 99 ? '99+' : String(due);
@@ -2030,24 +2051,30 @@ function updateReviewBadge(){
 }
 
 function renderReview(){
-  const due = dueList().length;
+  const queue = todayQueue();
+  const due = queue.length;
+  const st = dailyStat();
   $("#dueBig").innerHTML = due + '<i>张</i>';
-  $("#rNew").textContent = newCardCount();
+  $("#rNew").textContent = Math.max(0, plan.dailyNew - st.newDone);
   $("#rMastered").textContent = masteredCount();
   $("#rTotal").textContent = cards.length;
 
   const btn = $("#startReview");
+  const k = Math.min(plan.batch, due);
   btn.disabled = due === 0;
-  btn.textContent = due ? ('开始今日复习（' + due + ' 张）') : '今天没有待复习';
-  const capHint = $("#newCapHint");
-  if(capHint) capHint.textContent = "每日新卡上限 " + newCap() + " 张（可在「我的」调整）";
+  btn.textContent = due ? ('开始本批（' + k + ' 张）') : '今天没有要学的了';
+  const hint = $("#newCapHint");
+  if(hint) hint.textContent = "今日：新词 " + st.newDone + "/" + plan.dailyNew +
+    " · 复习 " + st.revDone + "/" + plan.dailyReview + " · 每批 " + plan.batch + " 张";
 
+  const qDue = {};
+  queue.forEach(c=>{ qDue[deckOf(c)] = (qDue[deckOf(c)] || 0) + 1; });
   const dm = deckMap();
   let html = '<button class="deckchip ' + (sess.deck === 'all' ? 'on' : '') +
     '" data-deck="all">全部 <span class="n">' + due + '/' + cards.length + '</span></button>';
-  Object.keys(dm).forEach(k=>{
-    html += '<button class="deckchip ' + (sess.deck === k ? 'on' : '') + '" data-deck="' + escHTML(k) + '">' +
-      escHTML(k) + ' <span class="n">' + dm[k].due + '/' + dm[k].total + '</span></button>';
+  Object.keys(dm).forEach(k2=>{
+    html += '<button class="deckchip ' + (sess.deck === k2 ? 'on' : '') + '" data-deck="' + escHTML(k2) + '">' +
+      escHTML(k2) + ' <span class="n">' + (qDue[k2] || 0) + '/' + dm[k2].total + '</span></button>';
   });
   $("#deckbar").innerHTML = html;
 
@@ -2058,9 +2085,11 @@ function renderReview(){
     (c.back||"").toLowerCase().indexOf(q) >= 0 ||
     deckOf(c).toLowerCase().indexOf(q) >= 0
   );
-  $("#cardCount").textContent = list.length + ' 张';
+  const total = list.length;
+  const shown = list.slice(0, 200);
+  $("#cardCount").textContent = total + ' 个词' + (total > shown.length ? '（显示前 ' + shown.length + ' 个）' : '');
   if(!list.length){
-    const msg = q ? '没有匹配的卡片' : (cards.length ? '这个牌组还没有卡片' : '还没有卡片');
+    const msg = q ? '没有匹配的单词' : (cards.length ? '这个牌组还没有卡片' : '还没有卡片');
     $("#cardList").innerHTML =
       '<div class="empty">' + msg +
       (cards.length ? '' :
@@ -2070,9 +2099,9 @@ function renderReview(){
       '</div>';
     return;
   }
-  $("#cardList").innerHTML = list.map(c=>{
-    const dueNow = isDue(c);
-    const label = dueNow ? '待复习' : ('间隔 ' + (c.interval || 0) + ' 天');
+  $("#cardList").innerHTML = shown.map(c=>{
+    const nw = isNewCard(c), dueNow = isDue(c);
+    const label = nw ? '新词' : dueNow ? '待复习' : ('间隔 ' + (c.interval || 0) + ' 天');
     return '<div class="rcard" data-id="' + c.id + '">' +
       '<div class="rc-body"><div class="rc-f">' + escHTML(c.front) + '</div>' +
       '<div class="rc-b">' + escHTML(c.back) + '</div></div>' +
@@ -2091,28 +2120,60 @@ function ratingButtonsHTML(c){
     '</div>';
 }
 
-const NEWCAP_KEY = "study_newcap_v1";
-function newCap(){
-  const v = parseInt(localStorage.getItem(NEWCAP_KEY), 10);
-  return isNaN(v) ? 20 : Math.max(0, Math.min(200, v));
+const PLAN_KEY = "study_plan_v1";
+const DAILY_KEY = "study_daily_v1";
+function clampN(v, d, lo, hi){
+  v = parseInt(v, 10);
+  if(isNaN(v)) v = d;
+  return Math.max(lo, Math.min(hi, v));
+}
+let plan = (function(){
+  const p = loadJSON(PLAN_KEY, null) || {};
+  return {
+    dailyNew: clampN(p.dailyNew, 20, 0, 200),
+    dailyReview: clampN(p.dailyReview, 60, 0, 500),
+    batch: clampN(p.batch, 20, 5, 100)
+  };
+})();
+function savePlan(){ saveJSON(PLAN_KEY, plan); }
+let dailyStats = loadJSON(DAILY_KEY, {});
+function dailyStat(ds){
+  const s = dailyStats[ds || todayKey()];
+  return { newDone: (s && s.newDone) || 0, revDone: (s && s.revDone) || 0 };
+}
+function bumpDaily(isNewOne){
+  const k = todayKey(), s = dailyStat(k);
+  if(isNewOne) s.newDone++; else s.revDone++;
+  dailyStats[k] = s;
+  saveJSON(DAILY_KEY, dailyStats);
+}
+const isNewCard = c => (c.reps || 0) === 0 && (c.lapses || 0) === 0;
+const seqOf = c => c.seq || 0;
+
+/* 今日队列：先按遗忘曲线排到期旧卡（越拖越靠前），再按书内顺序补新词 */
+function todayQueue(){
+  const st = dailyStat();
+  const base = cards.filter(c=> isDue(c) && (sess.deck === 'all' || deckOf(c) === sess.deck));
+  const rev = base.filter(c=> !isNewCard(c))
+    .sort((a,b)=> a.due < b.due ? -1 : a.due > b.due ? 1 : seqOf(a) - seqOf(b))
+    .slice(0, Math.max(0, plan.dailyReview - st.revDone));
+  const news = base.filter(isNewCard)
+    .sort((a,b)=> seqOf(a) - seqOf(b))
+    .slice(0, Math.max(0, plan.dailyNew - st.newDone));
+  return rev.concat(news);
+}
+function todayRemain(){
+  return todayQueue().length;
 }
 
 function startSession(){
-  const all = sess.deck === 'all' ? dueList() : dueList().filter(c=> deckOf(c) === sess.deck);
-  const cap = newCap();
-  let newUsed = 0;
-  const pool = all.filter(c=>{
-    if((c.reps||0) === 0 && (c.lapses||0) === 0){
-      if(newUsed >= cap) return false;
-      newUsed++;
-    }
-    return true;
-  });
-  if(!pool.length){
-    toast(all.length ? '新卡已达今日上限' : '今天没有待复习的卡片');
+  const q = todayQueue();
+  if(!q.length){
+    toast(plan.dailyNew === 0 && plan.dailyReview === 0 ? '今天计划是 0 张，先去「我的」调一下' : '今天没有要学的了');
     return;
   }
-  sess.on = true; sess.queue = pool.map(c=> c.id); sess.total0 = pool.length;
+  const batch = q.slice(0, plan.batch);
+  sess.on = true; sess.queue = batch.map(c=> c.id); sess.total0 = batch.length;
   sess.pos = 0; sess.revealed = false; sess.done = 0; sess.agains = {};
   renderSession();
   $("#reviewModal").classList.add('show');
@@ -2159,7 +2220,9 @@ function revealCard(){
 function rateCard(r){
   const c = currentCard();
   if(!c) return;
+  const wasNew = isNewCard(c);
   reviewCard(c, r);
+  bumpDaily(wasNew);
   if(r === 0){
     sess.agains[c.id] = (sess.agains[c.id] || 0) + 1;
     if(sess.agains[c.id] <= 2){
@@ -2182,11 +2245,21 @@ function rateCard(r){
 
 function finishSession(){
   const n = sess.done;
+  const remain = todayRemain();
+  const nextN = Math.min(plan.batch, remain);
   $("#reviewSheet").innerHTML =
-    '<div class="rm-top"><span class="rm-count">复习完成</span>' +
+    '<div class="rm-top"><span class="rm-count">本批完成</span>' +
     '<button class="rm-close" data-act="close" aria-label="关闭">' + icon('close') + '</button></div>' +
     '<div class="rdone"><div class="n">' + n + '</div><div class="k">张卡片已复习</div></div>' +
-    '<div class="focus-acts" style="margin-top:16px"><button class="btn primary" data-act="close">完成</button></div>';
+    (remain
+      ? '<div class="tiny" style="text-align:center;margin-top:6px">今日还剩 ' + remain + ' 张</div>'
+      : '<div class="tiny" style="text-align:center;margin-top:6px">今日计划已全部完成</div>') +
+    '<div class="focus-acts" style="margin-top:16px">' +
+      (remain
+        ? '<button class="btn primary" data-act="nextbatch">下一批（' + nextN + ' 张）</button>' +
+          '<button class="btn ghost" data-act="close" style="margin-left:8px">先歇会儿</button>'
+        : '<button class="btn primary" data-act="close">完成</button>') +
+    '</div>';
   sess.on = false;
   renderReview(); updateReviewBadge(); renderTodayReview();
   if(state.view === 'stats') buildStats();
@@ -2689,14 +2762,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
   $("#reviewRow").addEventListener("click", ()=> switchView("review"));
   $("#startReview").addEventListener("click", startSession);
   $("#cardSearch").addEventListener("input", ()=> renderReview());
-  $("#newCapInput").value = newCap();
-  $("#newCapInput").addEventListener("change", e=>{
-    const v = Math.max(0, Math.min(200, parseInt(e.target.value, 10) || 0));
-    localStorage.setItem(NEWCAP_KEY, String(v));
-    e.target.value = v;
-    renderReview();
-    toast("已更新新卡上限");
-  });
+  function bindPlanInput(sel, key, lo, hi){
+    const el = $(sel);
+    if(!el) return;
+    el.value = plan[key];
+    el.addEventListener("change", e=>{
+      const v = clampN(e.target.value, plan[key], lo, hi);
+      plan[key] = v;
+      e.target.value = v;
+      savePlan();
+      renderReview();
+      toast("已更新每日计划");
+    });
+  }
+  bindPlanInput("#planNew", "dailyNew", 0, 200);
+  bindPlanInput("#planReview", "dailyReview", 0, 500);
+  bindPlanInput("#planBatch", "batch", 5, 100);
   $("#deckbar").addEventListener("click", e=>{
     const chip = e.target.closest(".deckchip");
     if(!chip) return;
@@ -2755,6 +2836,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     r.readAsText(f);
   });
   $("#reviewSheet").addEventListener("click", e=>{
+    if(e.target.closest('[data-act="nextbatch"]')){ startSession(); return; }
     if(e.target.closest('[data-act="close"]')){ closeSession(); return; }
     const r = e.target.closest(".rbtn");
     if(r){ rateCard(Number(r.dataset.r)); return; }
@@ -2854,6 +2936,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   buildToday();
   buildWeek();
   renderJournal();
+  ensureSeq();
   renderReview();
   renderDates();
   updateReviewBadge();

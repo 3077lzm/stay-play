@@ -2005,6 +2005,7 @@ const SEED_CARDS = [
   ['C/C++','值传递 vs 地址传递','值传递改不了实参；传指针或引用才能改到实参']
 ];
 
+
 function renderTodayReview(){
   const row = $("#reviewRow");
   if(!row) return;
@@ -2235,8 +2236,10 @@ function saveCardForm(){
 function openImport(){
   $("#cardSheet").innerHTML =
     '<h3>批量导入</h3>' +
-    '<p class="tiny">每行一张，用竖线分隔：<b>正面 | 背面</b></p>' +
-    '<div class="field"><label>牌组</label><input id="ifDeck" value="英语四级"></div>' +
+    '<p class="tiny">每行一张，用竖线或 Tab 分隔：<b>正面 | 背面</b></p>' +
+    '<div class="field"><label>牌组</label><input id="ifDeck" value="四级·高频"></div>' +
+    '<div class="field"><label>或选择文本文件（.txt / .csv）</label>' +
+    '<input type="file" id="ifFile" accept=".txt,.csv,text/plain" style="font-size:12px"></div>' +
     '<div class="field"><label>内容</label><textarea id="ifText" rows="7" placeholder="abandon | v. 放弃&#10;brief | adj. 简短的"></textarea></div>' +
     '<div class="acts"><button class="btn ghost" data-act="cancel">取消</button>' +
     '<button class="btn primary" data-act="import">导入</button></div>';
@@ -2248,7 +2251,7 @@ function doImport(){
   const lines = ($("#ifText").value || '').split(/\r?\n/).map(s=> s.trim()).filter(Boolean);
   let n = 0;
   lines.forEach(line=>{
-    const parts = line.split(/\s*[|｜]\s*/);
+    const parts = line.split(/\s*[|｜\t]\s*/);
     if(parts.length < 2) return;
     const f = parts[0].trim(), b = parts.slice(1).join(' | ').trim();
     if(!f || !b) return;
@@ -2735,6 +2738,21 @@ document.addEventListener("DOMContentLoaded", ()=>{
     if(b.dataset.act === "save") saveCardForm();
     else if(b.dataset.act === "import") doImport();
     else $("#cardModal").classList.remove("show");
+  });
+  $("#cardSheet").addEventListener("change", e=>{
+    if(e.target.id !== "ifFile") return;
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      const text = String(r.result || "");
+      const m = text.match(/^#deck:\s*(.+)$/m);
+      if(m){ const d = $("#ifDeck"); if(d) d.value = m[1].trim(); }
+      const ta = $("#ifText");
+      if(ta) ta.value = text;
+      e.target.value = "";
+    };
+    r.readAsText(f);
   });
   $("#reviewSheet").addEventListener("click", e=>{
     if(e.target.closest('[data-act="close"]')){ closeSession(); return; }

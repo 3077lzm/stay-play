@@ -167,7 +167,13 @@ main{padding:0 16px 24px}
 .tier.life{color:var(--habit)} .tier.elec{color:var(--elec)}
 .cf{font-size:9px;line-height:1.5;padding:0 5px;border-radius:4px;border:1px solid currentColor;
   color:var(--core);margin-left:6px;letter-spacing:.02em;flex:0 0 auto}
-.cf.water{color:var(--eng)}
+.cf.tight{color:#a9781f}
+.planwarn{display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:11px 13px;border-radius:12px;
+  background:rgba(168,73,44,.07);border:1px solid rgba(168,73,44,.22);color:var(--ink-2);font-size:12px;line-height:1.5}
+.planwarn b{color:var(--core);font-weight:600}
+.planwarn svg{width:16px;height:16px;color:var(--core);flex:0 0 auto}
+.planwarn .btn{margin-left:auto;flex:0 0 auto}
+.planwarn .tiny{margin-top:2px}
 .tplay{width:29px;height:29px;flex:0 0 auto;border-radius:9px;border:1px solid var(--hair);
   background:transparent;color:var(--mute);display:flex;align-items:center;justify-content:center;
   padding:0;cursor:pointer;transition:transform .2s var(--ease-spring), color .25s var(--ease), border-color .25s var(--ease)}
@@ -555,6 +561,7 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
       <div class="card" id="todayClasses"></div>
 
       <div class="sec"><span class="sec-k">自习任务</span><span class="sec-rule"></span><span class="sec-n" id="todayCount">0/0</span></div>
+      <div id="planWarn"></div>
       <div class="task-list" id="todayTasks"></div>
       <button class="addtask" id="addTaskBtn"></button>
 
@@ -843,67 +850,70 @@ const DAILY = [
 ];
 
 const DEFAULT_CLASSES = {
-  1:[{t:"14:00–15:35", n:"体育-1",         r:"东一体育场"},
-     {t:"15:55–17:30", n:"军事理论",        r:"HC-阶2", elec:true}],
-  2:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-302"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true},
-     {t:"15:55–17:30", n:"工程图学",        r:"HA-203"}],
-  3:[{t:"14:00–15:35", n:"高等数学A-1",    r:"HB-204"},
-     {t:"15:55–17:30", n:"C/C++程序设计A",  r:"HF-机房18"}],
-  4:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-202"},
-     {t:"10:25–12:00", n:"工程图学",        r:"HB-301"},
-     {t:"15:55–17:30", n:"线性代数A",       r:"HA-301"}],
-  5:[{t:"08:30–10:05", n:"C/C++程序设计A",  r:"HF-机房11"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true},
-     {t:"15:55–17:30", n:"高等数学A-1",    r:"HB-206"}],
-  6:[{t:"08:30–10:05", n:"高等数学A-1",    r:"HB-105"},
-     {t:"10:25–12:00", n:"线性代数A",       r:"HA-101"},
-     {t:"14:00–15:35", n:"健康素养大讲堂",   r:"线上", elec:true}],
+  1:[{t:"14:00–15:35", n:"体育-1",         r:"东一体育场", from:"2026-10-05", to:"2026-12-28"},
+     {t:"15:55–17:30", n:"军事理论",        r:"HC-阶2",   from:"2026-11-09", to:"2026-12-28"}],
+  2:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-302",   from:"2026-10-06", to:"2026-12-29"},
+     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true, from:"2026-10-06", to:"2026-12-29"},
+     {t:"15:55–17:30", n:"工程图学",        r:"HA-203",   from:"2026-10-06", to:"2026-12-08"},
+     {t:"19:00–20:35", n:"校园导论",        r:"HB-107",   from:"2026-10-06", to:"2026-10-27"}],
+  3:[{t:"14:00–15:35", n:"高等数学A-1",    r:"HB-204",   from:"2026-10-07", to:"2026-12-30"},
+     {t:"15:55–17:30", n:"C/C++语言程序设计A", r:"HF-机房18", from:"2026-10-07", to:"2026-12-16"},
+     {t:"19:00–20:35", n:"心灵导航",        r:"冀101",    from:"2026-10-14", to:"2026-12-02"}],
+  4:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-202",   from:"2026-10-08", to:"2026-10-22"},
+     {t:"10:25–12:00", n:"工程图学",        r:"HB-301",   from:"2026-10-08", to:"2026-12-10"},
+     {t:"15:55–17:30", n:"线性代数A",       r:"HA-301",   from:"2026-10-08", to:"2026-11-19"},
+     {t:"19:00–20:35", n:"学科导论",        r:"HA-303",   from:"2026-10-15", to:"2026-11-05"},
+     {t:"19:00–20:35", n:"形势与政策1",     r:"待定",     from:"2026-11-19", to:"2026-11-19"}],
+  5:[{t:"08:30–10:05", n:"C/C++语言程序设计A", r:"HF-机房11", from:"2026-10-09", to:"2026-12-18"},
+     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true, from:"2026-10-09", to:"2026-11-20"},
+     {t:"15:55–17:30", n:"高等数学A-1",    r:"HB-206",   from:"2026-10-09", to:"2027-01-01"}],
+  6:[{t:"08:30–10:05", n:"高等数学A-1",    r:"HB-105",   from:"2026-10-10", to:"2026-12-19"},
+     {t:"10:25–12:00", n:"线性代数A",       r:"HA-101",   from:"2026-10-10", to:"2026-11-21"},
+     {t:"14:00–15:35", n:"大学生健康素养大讲堂", r:"线上", elec:true, from:"2026-10-10", to:"2026-11-28"}],
   7:[]
 };
 
 const DEFAULT_PLAN = {
   1:[
     {t:"08:15–10:15", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:25–11:25", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
-    {t:"15:55–17:30", s:"英语/四级", d:"军事理论（水课上看网课）", tier:"eng",  min:90},
-    {t:"19:00–20:30", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
-    {t:"20:35–21:35", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
+    {t:"10:30–11:30", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
+    {t:"11:45–13:15", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
+    {t:"17:45–19:15", s:"英语/四级", d:"听力 + 阅读（军事理论下课后）", tier:"eng",  min:90},
+    {t:"20:45–21:45", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
   ],
   2:[
-    {t:"10:25–12:00", s:"英语/四级", d:"史纲（水课）看网课/听力",  tier:"eng",  min:90},
+    {t:"10:25–12:00", s:"英语/四级", d:"水课上看网课 / 听力",  tier:"eng",  min:90},
+    {t:"12:15–13:15", s:"线性代数",  d:"概念梳理 + 例题",          tier:"core", min:60},
     {t:"13:30–15:30", s:"高等数学",  d:"刷题巩固",                tier:"core", min:120},
-    {t:"15:30–15:55", s:"线性代数",  d:"复习",                    tier:"core", min:20},
-    {t:"17:35–19:05", s:"工程图学",  d:"习题",                    tier:"core", min:90}
+    {t:"17:45–18:45", s:"工程图学",  d:"习题",                    tier:"core", min:60}
   ],
   3:[
     {t:"08:15–10:15", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:25–11:55", s:"线性代数", d:"刷题",                     tier:"core", min:90},
-    {t:"17:35–19:05", s:"工程图学", d:"习题",                     tier:"core", min:90},
-    {t:"20:35–21:35", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:60}
+    {t:"10:30–11:30", s:"线性代数", d:"刷题",                     tier:"core", min:60},
+    {t:"12:00–13:00", s:"工程图学", d:"习题",                     tier:"core", min:60},
+    {t:"20:55–21:55", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:60}
   ],
   4:[
+    {t:"12:15–13:15", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60},
     {t:"13:30–15:30", s:"高等数学",  d:"刷题",          tier:"core", min:120},
-    {t:"17:40–18:40", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60},
-    {t:"20:35–21:35", s:"C/C++",    d:"编程练习",      tier:"core", min:60}
+    {t:"17:45–18:45", s:"C/C++",    d:"编程练习",      tier:"core", min:60}
   ],
   5:[
-    {t:"10:25–12:00", s:"英语/四级", d:"史纲（水课）看网课/真题",  tier:"eng",  min:90},
-    {t:"13:30–15:00", s:"线性代数",  d:"刷题",                    tier:"core", min:90},
-    {t:"15:00–15:50", s:"工程图学",  d:"习题",                    tier:"core", min:50},
-    {t:"19:00–20:30", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:90},
-    {t:"20:35–21:35", s:"C/C++",    d:"编程练习",                 tier:"core", min:60}
+    {t:"10:25–12:00", s:"英语/四级", d:"水课上看网课 / 真题",  tier:"eng",  min:90},
+    {t:"12:15–13:45", s:"线性代数",  d:"刷题",                    tier:"core", min:90},
+    {t:"14:00–14:50", s:"工程图学",  d:"习题",                    tier:"core", min:50},
+    {t:"20:45–21:45", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:60}
   ],
   6:[
-    {t:"14:00–15:35", s:"剪辑课",    d:"健康素养（水课）看剪辑课",  tier:"edit", min:90},
-    {t:"15:40–17:40", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120},
-    {t:"19:00–20:30", s:"英语/四级", d:"真题模拟 / 精听",          tier:"eng",  min:90}
+    {t:"12:15–13:15", s:"英语/四级", d:"真题模拟 / 精听",          tier:"eng",  min:60},
+    {t:"14:00–15:35", s:"剪辑课",    d:"水课上看剪辑课",  tier:"edit", min:90},
+    {t:"15:50–17:50", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120}
   ],
   7:[
     {t:"08:30–10:00", s:"英语/四级", d:"真题 / 听力",      tier:"eng",  min:90},
-    {t:"10:10–11:40", s:"高等数学",  d:"本周查漏补缺",     tier:"core", min:90},
+    {t:"10:15–11:45", s:"高等数学",  d:"本周查漏补缺",     tier:"core", min:90},
     {t:"14:00–15:30", s:"线性代数",  d:"查漏补缺",         tier:"core", min:90},
-    {t:"15:40–17:10", s:"工程图学",  d:"查漏补缺",         tier:"core", min:90},
+    {t:"15:45–17:15", s:"工程图学",  d:"查漏补缺",         tier:"core", min:90},
     {t:"19:00–21:00", s:"剪辑课",   d:"整块学课 + 实操",   tier:"edit", min:120}
   ]
 };
@@ -935,11 +945,40 @@ if(!sched || !sched.semesters || !sched.semesters.length){
 }else{
   sched.semesters.forEach(s=> ensureTaskIds(s.plan));
 }
+/* 一次性迁移：修正旧默认课表（含不存在的“军事理论”、缺 19:00 晚课） */
+(function migrateSchedule(){
+  const MIG = "study_sched_mig_v4";
+  if(localStorage.getItem(MIG)) return;
+  const sem = activeSem();
+  const hasOld = sem && sem.classes && Object.values(sem.classes).some(list=>
+    (list || []).some(c => c.n === "军事理论" && !c.from)
+  );
+  if(hasOld){
+    sem.classes = clone(DEFAULT_CLASSES);
+    sem.plan = ensureTaskIds(clone(DEFAULT_PLAN));
+    const monday = mondayOf(today());
+    Object.keys(sem.plan).forEach(wd=>{
+      sem.plan[wd] = reflowPlan(Number(wd), dateKey(addDays(monday, Number(wd) - 1)));
+    });
+    saveJSON(SCHED_KEY, sched);
+  }
+  localStorage.setItem(MIG, "1");
+})();
 function saveSched(){ saveJSON(SCHED_KEY, sched); }
 function activeSem(){
   return sched.semesters.find(s=> s.id === sched.active) || sched.semesters[0];
 }
-function classesFor(wd){ const s = activeSem(); return (s && s.classes && s.classes[wd]) || []; }
+function classInRange(c, ds){
+  if(!ds) return true;
+  if(c.from && ds < c.from) return false;
+  if(c.to && ds > c.to) return false;
+  return true;
+}
+function classesFor(wd, ds){
+  const s = activeSem();
+  const list = (s && s.classes && s.classes[wd]) || [];
+  return ds ? list.filter(c=> classInRange(c, ds)) : list;
+}
 function planFor(wd){ const s = activeSem(); return (s && s.plan && s.plan[wd]) || []; }
 
 /* ---------- 课程章节进度：0 未学 / 1 在学 / 2 掌握 ---------- */
@@ -1247,15 +1286,21 @@ function classRows(cls){
      </div>`).join("") + '</div>';
 }
 
-function taskConflict(wd, t){
+function taskConflict(wd, t, ds){
   const m = String(t.t||"").match(/(\d{1,2}):(\d{2})[^\d]+(\d{1,2}):(\d{2})/);
   if(!m) return null;
   const a = (+m[1])*60 + (+m[2]), b = (+m[3])*60 + (+m[4]);
-  const list = classesFor(wd) || [];
+  const light = t.tier === "eng" || t.tier === "edit" || t.tier === "habit";
+  const list = classesFor(wd, ds) || [];
   for(const c of list){
     const r = classRange(c);
     if(!r) continue;
-    if(a < r.e && b > r.s) return c;
+    if(a < r.e && b > r.s){
+      if(c.elec && light) continue;      // 水课上的轻任务，允许
+      return { c:c, kind:"overlap" };
+    }
+    if(r.s - b >= 0 && r.s - b < 15) return { c:c, kind:"tight", gap:r.s-b };
+    if(a - r.e >= 0 && a - r.e < 15) return { c:c, kind:"tight", gap:a-r.e };
   }
   return null;
 }
@@ -1267,8 +1312,11 @@ function taskRow(tk, ds, wd, i, compact){
   if(tk.s) parts.push(`<span>${tk.s}</span>`);
   if(tk.min) parts.push(`<span>${fmtMin(tk.min)}</span>`);
   let meta = parts.join('<span class="sep">·</span>');
-  const cf = taskConflict(wd, tk);
-  if(cf) meta += `<span class="cf${cf.elec?' water':''}" title="${escHTML(cf.n)}">${cf.elec?'水课':'冲突'}</span>`;
+  const cf = taskConflict(wd, tk, ds);
+  if(cf){
+    const label = cf.kind === "tight" ? "太赶" : "冲突";
+    meta += `<span class="cf ${cf.kind}" title="${escHTML(cf.c.n)} ${escHTML(cf.c.t||'')}">${label}</span>`;
+  }
   const play = '<button class="tplay" data-play="1" aria-label="专注计时">'+icon('play')+'</button>';
   const del = tk.custom ? '<button class="tplay delcustom" aria-label="删除临时任务">'+icon('trash')+'</button>' : '';
   return `<div class="task ${done?'done':''}" ${compact?'':'style="--i:'+i+'"'} data-key="${tk.key}" data-wd="${wd}" data-date="${ds}">
@@ -1288,15 +1336,17 @@ function parseMin(t){
 }
 function fmtMin2(m){ return pad2(Math.floor(m/60)) + ":" + pad2(m%60); }
 /* 按课表重排一天：重任务只进空档，轻任务（英语/剪辑/习惯）可进水课 */
-function reflowPlan(wd){
+function reflowPlan(wd, ds){
   const plan = planFor(wd).slice();
   if(!plan.length) return plan;
-  const cls = (classesFor(wd)||[]).map(c=> ({ c:c, r:classRange(c) })).filter(x=> x.r);
+  const GAP = 15;
+  const cls = (classesFor(wd, ds)||[]).map(c=> ({ c:c, r:classRange(c) })).filter(x=> x.r);
   const windows = [];
   let cur = 7*60;
   cls.slice().sort((a,b)=> a.r.s - b.r.s).forEach(x=>{
-    if(x.r.s > cur) windows.push({ a:cur, b:x.r.s, kind:"free" });
-    cur = Math.max(cur, x.r.e);
+    const end = x.r.s - GAP;
+    if(end > cur) windows.push({ a:cur, b:end, kind:"free" });
+    cur = Math.max(cur, x.r.e + GAP);
   });
   if(cur < 22*60+30) windows.push({ a:cur, b:22*60+30, kind:"free" });
   cls.filter(x=> x.c.elec).forEach(x=> windows.push({ a:x.r.s, b:x.r.e, kind:"water" }));
@@ -1324,7 +1374,8 @@ function reflowPlan(wd){
 function reflowDay(wd){
   const sem = activeSem();
   if(!sem.plan) sem.plan = {};
-  sem.plan[wd] = reflowPlan(wd);
+  const ds = dateKey(addDays(mondayOf(today()), wd - 1));
+  sem.plan[wd] = reflowPlan(wd, ds);
   saveSched();
   buildWeek(); buildToday();
   toast("已按课表重排 " + DAY_S[wd]);
@@ -1336,7 +1387,8 @@ function classRange(c){
   return { s: (+m[1])*60 + (+m[2]), e: (+m[3])*60 + (+m[4]) };
 }
 function nowClassInfo(){
-  const cls = classesFor(weekdayOf(today()));
+  const wd = weekdayOf(today()), ds = dateKey(today());
+  const cls = classesFor(wd, ds);
   if(!cls.length) return { html:'<span class="nowdot off"></span>今天没课，全天自由安排' };
   const now = new Date();
   const mins = now.getHours()*60 + now.getMinutes();
@@ -1369,11 +1421,23 @@ function buildToday(){
   $("#todayKick").textContent = "TODAY · 周" + DAY_S[wd];
   $("#todayDate").textContent = (t.getMonth()+1) + "月" + t.getDate() + "日";
   $("#nowClass").innerHTML = nowClassInfo().html;
-  $("#todayClasses").innerHTML = classRows(classesFor(wd));
+  $("#todayClasses").innerHTML = classRows(classesFor(wd, ds));
   renderTodayDates();
 
   const tasks = tasksFor(wd, ds);
   $("#todayTasks").innerHTML = tasks.map((tk,i)=> taskRow(tk, ds, wd, i, false)).join("");
+
+  const plan = planFor(wd);
+  const cfs = plan.map(t=> taskConflict(wd, t, ds)).filter(Boolean);
+  const warn = $("#planWarn");
+  if(warn){
+    warn.innerHTML = cfs.length
+      ? '<div class="planwarn">' + icon('bolt') +
+        '<div><b>' + cfs.length + ' 个任务和课程冲突或太赶</b>' +
+        '<div class="tiny">重任务只进空档，英语/剪辑可放水课；点「重排」按课表算一遍</div></div>' +
+        '<button class="btn primary sm" data-fixplan="' + wd + '">重排</button></div>'
+      : "";
+  }
 
   state.builtDate = ds;
   refreshHero();
@@ -1569,7 +1633,7 @@ function buildWeek(){
     const isToday = ds === tds;
     const p = dayProgress(ds, wd);
     const pct = p.total ? Math.round(p.done/p.total*100) : 0;
-    const cls = classesFor(wd);
+    const cls = edit ? classesFor(wd) : classesFor(wd, ds);
     const plan = planFor(wd);
     const tasks = tasksFor(wd, ds);
     const open = isToday || openDays.has(ds);
@@ -1651,6 +1715,8 @@ function openClassForm(wd, idx){
     '<div class="field"><label>课程名</label><input id="efName" value="'+escHTML(c.n||"")+'" placeholder="例如：大学物理"></div>' +
     '<div class="field"><label>时间</label><input id="efTime" value="'+escHTML(c.t||"")+'" placeholder="例如：08:30–10:05"></div>' +
     '<div class="field"><label>地点</label><input id="efRoom" value="'+escHTML(c.r||"")+'" placeholder="例如：HB-204"></div>' +
+    '<div class="field"><label>开始日期（可选，留空=学期一直有）</label><input type="date" id="efFrom" value="'+escHTML(c.from||"")+'"></div>' +
+    '<div class="field"><label>结束日期（可选，留空=学期一直有）</label><input type="date" id="efTo" value="'+escHTML(c.to||"")+'"></div>' +
     '<div class="field"><label><input type="checkbox" id="efElec" style="width:auto;margin-right:6px"'+(c.elec?' checked':'')+'>按水课处理（考前突击）</label></div>' +
     '<div class="acts">' +
       (idx!=null ? '<button class="btn danger" data-act="del-class">删除</button>' : '') +
@@ -1667,6 +1733,10 @@ function saveClassForm(){
     r: ($("#efRoom").value||"").trim(),
     elec: $("#efElec").checked
   };
+  const from = ($("#efFrom").value||"").trim();
+  const to = ($("#efTo").value||"").trim();
+  if(from) obj.from = from;
+  if(to) obj.to = to;
   if(!obj.elec) delete obj.elec;
   const wd = editEntry.wd;
   if(!activeSem().classes) activeSem().classes = {};
@@ -2712,6 +2782,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     localStorage.removeItem(BG_KEY);
     applyBg();
     toast("已恢复默认背景");
+  });
+  document.addEventListener("click", e=>{
+    const fp = e.target.closest("[data-fixplan]");
+    if(fp){ e.preventDefault(); reflowDay(Number(fp.dataset.fixplan)); }
   });
 
   /* exam date */

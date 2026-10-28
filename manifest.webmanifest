@@ -4,8 +4,8 @@
   "description": "基于课表的学习打卡工作台：核心科目复习、英语四级、剪辑课安排",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f2f4f8",
-  "theme_color": "#4f46e5",
+  "background_color": "#f4f2ec",
+  "theme_color": "#2f5d50",
   "orientation": "portrait",
   "icons": [
     { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },

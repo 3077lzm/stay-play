@@ -32,6 +32,8 @@
   --habit:#6f6a5e;
   --elec:#9a968a;
   --shadow:0 1px 2px rgba(25,27,31,.045);
+  --nav-bg:rgba(253,252,249,.86);
+  --bg-wash:rgba(244,242,236,.9);
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-spring:cubic-bezier(.34,1.4,.64,1);
   --navh:62px;
@@ -45,8 +47,11 @@
   --accent:#5fa593; --accent-rgb:95,165,147; --accent-ink:#0d1210;
   --core:#cf7051; --eng:#86a3d0; --edit:#a6b86d; --habit:#9d978a; --elec:#7c786c;
   --shadow:0 1px 2px rgba(0,0,0,.45);
+  --nav-bg:rgba(23,25,28,.86);
+  --bg-wash:rgba(17,18,20,.86);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid rgba(var(--accent-rgb),.55);outline-offset:2px;border-radius:6px}
 html{scroll-behavior:smooth}
 html,body{margin:0;padding:0}
 body{
@@ -57,6 +62,11 @@ body{
   transition:background-color .4s var(--ease), color .4s var(--ease);
 }
 #app{max-width:580px;margin:0 auto;min-height:100vh}
+body.has-bg{
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--bg-wash), var(--bg-wash)), var(--bg);
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
 
 /* header */
 header{
@@ -85,19 +95,20 @@ main{padding:0 16px 24px}
 .view.active{display:block;animation:viewIn .42s var(--ease) both}
 @keyframes viewIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 
-.card{background:var(--surface);border:1px solid var(--hair);border-radius:15px;box-shadow:var(--shadow);
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow);
   transition:background-color .4s var(--ease), border-color .4s var(--ease)}
 .pad{padding:15px 16px}
-.sec{display:flex;align-items:center;gap:10px;margin:23px 2px 10px}
-.sec-k{font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--mute)}
+.sec{display:flex;align-items:center;gap:9px;margin:28px 2px 12px}
+.sec-k{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-2)}
+.sec-k:before{content:"";width:3px;height:11px;border-radius:2px;background:var(--accent);flex:0 0 auto}
 .sec-rule{flex:1;height:1px;background:var(--hair)}
-.sec-n{font-size:11.5px;color:var(--mute);font-variant-numeric:tabular-nums}
+.sec-n{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
 
 /* hero */
 .hero{padding:2px 2px 0}
 .hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
 .hero-kick{font-size:10.5px;letter-spacing:.12em;color:var(--mute);font-weight:600}
-.bigdate{font-size:27px;font-weight:700;letter-spacing:-.4px;line-height:1.15;margin-top:5px}
+.bigdate{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:-.3px;line-height:1.1;margin-top:5px}
 .pctbox{text-align:right;flex:0 0 auto}
 .num{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1;
   font-variant-numeric:tabular-nums;letter-spacing:-.5px}
@@ -108,7 +119,7 @@ main{padding:0 16px 24px}
 .pct-sub{font-size:10.5px;color:var(--mute);margin-top:5px;font-variant-numeric:tabular-nums}
 .meter{height:4px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:14px}
 .meter i{display:block;height:100%;border-radius:3px;background:var(--accent);width:0;transition:width .5s var(--ease)}
-.hero-meta{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+.hero-meta{display:flex;align-items:center;gap:14px;margin-top:12px;padding-bottom:14px;flex-wrap:wrap;border-bottom:1px solid var(--hair)}
 .meta{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2)}
 .meta svg{width:14px;height:14px;color:var(--mute)}
 .meta b{font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink)}
@@ -154,6 +165,9 @@ main{padding:0 16px 24px}
 .tier i{width:5px;height:5px;border-radius:50%;background:currentColor}
 .tier.core{color:var(--core)} .tier.eng{color:var(--eng)} .tier.edit{color:var(--edit)}
 .tier.life{color:var(--habit)} .tier.elec{color:var(--elec)}
+.cf{font-size:9px;line-height:1.5;padding:0 5px;border-radius:4px;border:1px solid currentColor;
+  color:var(--core);margin-left:6px;letter-spacing:.02em;flex:0 0 auto}
+.cf.water{color:var(--eng)}
 .tplay{width:29px;height:29px;flex:0 0 auto;border-radius:9px;border:1px solid var(--hair);
   background:transparent;color:var(--mute);display:flex;align-items:center;justify-content:center;
   padding:0;cursor:pointer;transition:transform .2s var(--ease-spring), color .25s var(--ease), border-color .25s var(--ease)}
@@ -255,17 +269,17 @@ main{padding:0 16px 24px}
 .rep-acts{display:flex;gap:8px;margin-top:13px}
 
 /* settings */
-.group{background:var(--surface);border:1px solid var(--hair);border-radius:15px;overflow:hidden;
+.group{background:var(--surface);border:1px solid var(--hair);border-radius:16px;overflow:hidden;
   box-shadow:var(--shadow);transition:background-color .4s var(--ease), border-color .4s var(--ease)}
-.srow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px}
 .srow + .srow{border-top:1px solid var(--hair)}
-.srow-t{font-size:13.5px;font-weight:600}
-.srow-d{font-size:10.5px;color:var(--mute);margin-top:3px;line-height:1.4}
-.btn{border:1px solid transparent;border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:600;
+.srow-t{font-size:13.5px;font-weight:600;letter-spacing:-.1px}
+.srow-d{font-size:11px;color:var(--mute);margin-top:3px;line-height:1.5}
+.btn{border:1px solid transparent;border-radius:11px;padding:9px 15px;font-size:12.5px;font-weight:600;
   cursor:pointer;font-family:inherit;letter-spacing:.02em;
   transition:transform .18s var(--ease-spring), background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease)}
 .btn:active{transform:scale(.95)}
-.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 8px 18px -12px rgba(var(--accent-rgb),.9)}
 .btn.ghost{background:transparent;border-color:var(--hair-2);color:var(--ink-2)}
 .btn.danger{background:transparent;border-color:var(--hair-2);color:var(--core)}
 .btn[disabled]{opacity:.4;pointer-events:none}
@@ -282,7 +296,8 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
 /* nav */
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:580px;margin:0 auto;
   height:calc(var(--navh) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);
-  background:var(--surface);border-top:1px solid var(--hair);display:flex;
+  background:var(--nav-bg);-webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
+  border-top:1px solid var(--hair);display:flex;
   transition:background-color .4s var(--ease), border-color .4s var(--ease)}
 .nav-ink{position:absolute;top:-1px;left:0;width:20%;height:2px;border-radius:0 0 2px 2px;background:var(--accent);
   transform:translateX(calc(var(--tab,0) * 100%));transition:transform .44s var(--ease)}
@@ -290,8 +305,8 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
   background:none;border:none;color:var(--mute);font-family:inherit;font-size:9.5px;letter-spacing:.03em;
   cursor:pointer;transition:color .28s var(--ease), transform .28s var(--ease-spring)}
 #tabbar .tab svg{width:19px;height:19px;transition:transform .3s var(--ease-spring)}
-#tabbar .tab.active{color:var(--accent)}
-#tabbar .tab.active svg{transform:translateY(-1px) scale(1.04)}
+#tabbar .tab.active{color:var(--accent);font-weight:600}
+#tabbar .tab.active svg{transform:translateY(-1px) scale(1.06)}
 #tabbar .tab:active{transform:scale(.94)}
 
 /* modal / sheet */
@@ -314,7 +329,7 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
 .toast-act{border:none;background:none;color:inherit;font-family:inherit;font-size:12px;
   font-weight:700;text-decoration:underline;text-underline-offset:2px;margin-left:9px;padding:0;cursor:pointer;opacity:.95}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.empty{text-align:center;color:var(--mute);font-size:12px;padding:18px 0}
+.empty{text-align:center;color:var(--mute);font-size:12px;padding:30px 14px;line-height:1.7}
 .tiny{font-size:11px;line-height:1.7;color:var(--mute)}
 
 /* focus sheet */
@@ -340,7 +355,8 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
 
 /* ---------- review ---------- */
 .btn.block{width:100%;padding:12px}
-.review-row{display:flex;align-items:center;gap:11px;padding:12px 13px;margin-top:12px;cursor:pointer;
+.review-row{display:flex;align-items:center;gap:11px;padding:13px 14px;margin-top:12px;cursor:pointer;
+  background:linear-gradient(180deg, rgba(var(--accent-rgb),.06), rgba(var(--accent-rgb),0) 72%), var(--surface);
   transition:transform .18s var(--ease-spring), background-color .4s var(--ease), border-color .4s var(--ease)}
 .review-row:active{transform:scale(.985)}
 .rr-icon{width:30px;height:30px;border-radius:9px;background:rgba(var(--accent-rgb),.1);color:var(--accent);
@@ -353,31 +369,34 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
 .rr-go{font-size:11.5px;color:var(--mute);display:flex;align-items:center;gap:2px}
 .rr-go svg{width:12px;height:12px}
 
-.rhero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:2px 2px 0}
-.rhero .big{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1;letter-spacing:-.5px}
-.rhero .big i{font-style:normal;font-size:.5em;color:var(--mute);font-weight:500;margin-left:2px}
-.rhero .lab{font-size:11px;color:var(--mute);margin-top:6px}
-.ristats{display:flex;gap:15px}
-.ristat{text-align:right}
-.ristat .v{font-family:var(--serif);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
-.ristat .k{font-size:9.5px;color:var(--mute);margin-top:3px;letter-spacing:.03em}
-.review-start{margin-top:14px}
+.rhero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:4px 2px 16px;border-bottom:1px solid var(--hair)}
+.rhero .big{font-family:var(--serif);font-size:38px;font-weight:600;line-height:1;letter-spacing:-.8px}
+.rhero .big i{font-style:normal;font-size:.46em;color:var(--mute);font-weight:500;margin-left:3px}
+.rhero .lab{font-size:11px;color:var(--mute);margin-top:7px;letter-spacing:.02em}
+.ristats{display:flex;align-items:flex-end}
+.ristat{text-align:right;padding:0 13px}
+.ristat + .ristat{border-left:1px solid var(--hair)}
+.ristat:last-child{padding-right:0}
+.ristat .v{font-family:var(--serif);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+.ristat .k{font-size:9.5px;color:var(--mute);margin-top:5px;letter-spacing:.04em;white-space:nowrap}
+.review-start{margin-top:18px}
+.review-start .btn{width:100%;padding:14px;font-size:13.5px;border-radius:13px;letter-spacing:.02em}
 
-.deckbar{display:flex;gap:6px;overflow-x:auto;padding:3px 0 4px;margin-top:12px;scrollbar-width:none}
+.deckbar{display:flex;gap:6px;overflow-x:auto;padding:3px 0 5px;margin-top:14px;scrollbar-width:none}
 .deckbar::-webkit-scrollbar{display:none}
-.deckchip{flex:0 0 auto;border:1px solid var(--hair);background:transparent;color:var(--ink-2);
-  border-radius:999px;padding:6px 11px;font-size:11.5px;font-family:inherit;cursor:pointer;
+.deckchip{flex:0 0 auto;border:1px solid var(--hair);background:var(--surface);color:var(--ink-2);
+  border-radius:999px;padding:7px 12px;font-size:12px;font-family:inherit;cursor:pointer;
   transition:background-color .22s var(--ease), border-color .22s var(--ease), color .22s var(--ease)}
 .deckchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .deckchip .n{opacity:.6;margin-left:4px;font-variant-numeric:tabular-nums}
 
-.rcards{display:flex;flex-direction:column;gap:7px;margin-top:9px}
-.rcard{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface);
-  border:1px solid var(--hair);border-radius:12px;cursor:pointer;
+.rcards{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.rcard{display:flex;align-items:center;gap:10px;padding:12px 13px;background:var(--surface);
+  border:1px solid var(--hair);border-radius:13px;cursor:pointer;
   transition:transform .16s var(--ease-spring), background-color .4s var(--ease), border-color .4s var(--ease)}
 .rcard:active{transform:scale(.99)}
 .rc-body{flex:1;min-width:0}
-.rc-f{font-size:13px;font-weight:600;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-f{font-size:13.5px;font-weight:600;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.1px}
 .rc-b{font-size:11.5px;color:var(--mute);margin-top:2px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rc-meta{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .rc-due{font-size:9.5px;color:var(--mute);padding:3px 7px;border:1px solid var(--hair);border-radius:999px;white-space:nowrap}
@@ -657,6 +676,14 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
           <label class="sw"><input type="checkbox" id="darkSwitch"><span></span></label>
         </div>
         <div class="srow">
+          <div><div class="srow-t">自定义背景</div><div class="srow-d">从相册选一张图，自动压缩后只存在本机</div></div>
+          <div style="display:flex;gap:7px;align-items:center;flex:0 0 auto">
+            <input type="file" id="bgInput" accept="image/*" style="display:none">
+            <button class="btn ghost sm" id="bgPickBtn">选图</button>
+            <button class="btn ghost sm" id="bgClearBtn">默认</button>
+          </div>
+        </div>
+        <div class="srow">
           <div><div class="srow-t">每天新词</div><div class="srow-d">每天最多学多少个新词</div></div>
           <input type="number" id="planNew" min="0" max="200" class="numinput">
         </div>
@@ -745,6 +772,7 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
    Icons
    ============================================================ */
 const ICONS = {
+  refresh:'<path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M20.5 4.5V10h-5.5"/>',
   check:'<path d="M5 12.4l4.1 4.1L19 7.3"/>',
   today:'<circle cx="12" cy="12" r="8.4"/><path d="M8.2 12.3l2.6 2.6L16 9.6"/>',
   week:'<rect x="3.8" y="5" width="16.4" height="15" rx="3"/><path d="M3.8 9.6h16.4M8.2 3.2v3.6M15.8 3.2v3.6"/>',
@@ -816,9 +844,9 @@ const DAILY = [
 
 const DEFAULT_CLASSES = {
   1:[{t:"14:00–15:35", n:"体育-1",         r:"东一体育场"},
-     {t:"15:55–17:30", n:"军事理论",        r:"HC-阶2"}],
+     {t:"15:55–17:30", n:"军事理论",        r:"HC-阶2", elec:true}],
   2:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-302"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301"},
+     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true},
      {t:"15:55–17:30", n:"工程图学",        r:"HA-203"}],
   3:[{t:"14:00–15:35", n:"高等数学A-1",    r:"HB-204"},
      {t:"15:55–17:30", n:"C/C++程序设计A",  r:"HF-机房18"}],
@@ -826,7 +854,7 @@ const DEFAULT_CLASSES = {
      {t:"10:25–12:00", n:"工程图学",        r:"HB-301"},
      {t:"15:55–17:30", n:"线性代数A",       r:"HA-301"}],
   5:[{t:"08:30–10:05", n:"C/C++程序设计A",  r:"HF-机房11"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301"},
+     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true},
      {t:"15:55–17:30", n:"高等数学A-1",    r:"HB-206"}],
   6:[{t:"08:30–10:05", n:"高等数学A-1",    r:"HB-105"},
      {t:"10:25–12:00", n:"线性代数A",       r:"HA-101"},
@@ -836,44 +864,47 @@ const DEFAULT_CLASSES = {
 
 const DEFAULT_PLAN = {
   1:[
-    {t:"08:15–11:30", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
-    {t:"11:30–12:00", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:30},
-    {t:"19:00–20:30", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:60},
-    {t:"20:30–21:30", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
+    {t:"08:15–10:15", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
+    {t:"10:25–11:25", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
+    {t:"15:55–17:30", s:"英语/四级", d:"军事理论（水课上看网课）", tier:"eng",  min:90},
+    {t:"19:00–20:30", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
+    {t:"20:35–21:35", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
   ],
   2:[
-    {t:"13:30–15:30", s:"高等数学",  d:"刷题巩固",          tier:"core", min:90},
-    {t:"15:30–15:55", s:"线性代数",  d:"复习",              tier:"core", min:20},
-    {t:"17:30–19:00", s:"英语/四级", d:"听力 + 阅读真题",   tier:"eng",  min:60}
+    {t:"10:25–12:00", s:"英语/四级", d:"史纲（水课）看网课/听力",  tier:"eng",  min:90},
+    {t:"13:30–15:30", s:"高等数学",  d:"刷题巩固",                tier:"core", min:120},
+    {t:"15:30–15:55", s:"线性代数",  d:"复习",                    tier:"core", min:20},
+    {t:"17:35–19:05", s:"工程图学",  d:"习题",                    tier:"core", min:90}
   ],
   3:[
-    {t:"08:15–11:30", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
-    {t:"17:30–19:00", s:"工程图学", d:"习题",                    tier:"core", min:60},
-    {t:"20:35–21:30", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:40}
+    {t:"08:15–10:15", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
+    {t:"10:25–11:55", s:"线性代数", d:"刷题",                     tier:"core", min:90},
+    {t:"17:35–19:05", s:"工程图学", d:"习题",                     tier:"core", min:90},
+    {t:"20:35–21:35", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:60}
   ],
   4:[
-    {t:"13:30–15:30", s:"高等数学",  d:"刷题",          tier:"core", min:90},
-    {t:"17:30–19:00", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60},
-    {t:"20:35–21:30", s:"C/C++",    d:"编程练习",      tier:"core", min:60}
+    {t:"13:30–15:30", s:"高等数学",  d:"刷题",          tier:"core", min:120},
+    {t:"17:40–18:40", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60},
+    {t:"20:35–21:35", s:"C/C++",    d:"编程练习",      tier:"core", min:60}
   ],
   5:[
-    {t:"13:30–15:00", s:"线性代数", d:"刷题",                 tier:"core", min:60},
-    {t:"15:00–15:55", s:"工程图学", d:"习题",                 tier:"core", min:45},
-    {t:"19:00–20:30", s:"高等数学", d:"复习 + 预习（重点）",   tier:"core", min:90},
-    {t:"20:30–21:30", s:"C/C++",   d:"编程练习",             tier:"core", min:60}
+    {t:"10:25–12:00", s:"英语/四级", d:"史纲（水课）看网课/真题",  tier:"eng",  min:90},
+    {t:"13:30–15:00", s:"线性代数",  d:"刷题",                    tier:"core", min:90},
+    {t:"15:00–15:50", s:"工程图学",  d:"习题",                    tier:"core", min:50},
+    {t:"19:00–20:30", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:90},
+    {t:"20:35–21:35", s:"C/C++",    d:"编程练习",                 tier:"core", min:60}
   ],
   6:[
-    {t:"12:00–14:00", s:"英语/四级", d:"真题模拟 / 精听",      tier:"eng",  min:60},
-    {t:"15:35–18:00", s:"高等数学",  d:"刷题（重点）",         tier:"core", min:90},
-    {t:"19:00–20:30", s:"线性代数",  d:"刷题",                 tier:"core", min:60},
-    {t:"20:30–21:30", s:"C/C++",    d:"编程练习",             tier:"core", min:60}
+    {t:"14:00–15:35", s:"剪辑课",    d:"健康素养（水课）看剪辑课",  tier:"edit", min:90},
+    {t:"15:40–17:40", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120},
+    {t:"19:00–20:30", s:"英语/四级", d:"真题模拟 / 精听",          tier:"eng",  min:90}
   ],
   7:[
-    {t:"08:30–10:00", s:"英语/四级", d:"真题 / 听力",         tier:"eng",  min:60},
-    {t:"10:00–12:00", s:"高等数学",  d:"本周查漏补缺",        tier:"core", min:90},
-    {t:"14:00–15:30", s:"线性代数",  d:"查漏补缺",            tier:"core", min:60},
-    {t:"15:30–17:00", s:"工程图学",  d:"查漏补缺",            tier:"core", min:60},
-    {t:"19:00–21:00", s:"剪辑课",   d:"整块学课 + 实操",       tier:"edit", min:90}
+    {t:"08:30–10:00", s:"英语/四级", d:"真题 / 听力",      tier:"eng",  min:90},
+    {t:"10:10–11:40", s:"高等数学",  d:"本周查漏补缺",     tier:"core", min:90},
+    {t:"14:00–15:30", s:"线性代数",  d:"查漏补缺",         tier:"core", min:90},
+    {t:"15:40–17:10", s:"工程图学",  d:"查漏补缺",         tier:"core", min:90},
+    {t:"19:00–21:00", s:"剪辑课",   d:"整块学课 + 实操",   tier:"edit", min:120}
   ]
 };
 
@@ -1216,6 +1247,18 @@ function classRows(cls){
      </div>`).join("") + '</div>';
 }
 
+function taskConflict(wd, t){
+  const m = String(t.t||"").match(/(\d{1,2}):(\d{2})[^\d]+(\d{1,2}):(\d{2})/);
+  if(!m) return null;
+  const a = (+m[1])*60 + (+m[2]), b = (+m[3])*60 + (+m[4]);
+  const list = classesFor(wd) || [];
+  for(const c of list){
+    const r = classRange(c);
+    if(!r) continue;
+    if(a < r.e && b > r.s) return c;
+  }
+  return null;
+}
 function taskRow(tk, ds, wd, i, compact){
   const done = isDone(ds, wd, tk.key);
   const tier = TIER[tk.tier] || TIER.elec;
@@ -1223,7 +1266,9 @@ function taskRow(tk, ds, wd, i, compact){
   if(tk.t) parts.push(`<span>${tk.t}</span>`);
   if(tk.s) parts.push(`<span>${tk.s}</span>`);
   if(tk.min) parts.push(`<span>${fmtMin(tk.min)}</span>`);
-  const meta = parts.join('<span class="sep">·</span>');
+  let meta = parts.join('<span class="sep">·</span>');
+  const cf = taskConflict(wd, tk);
+  if(cf) meta += `<span class="cf${cf.elec?' water':''}" title="${escHTML(cf.n)}">${cf.elec?'水课':'冲突'}</span>`;
   const play = '<button class="tplay" data-play="1" aria-label="专注计时">'+icon('play')+'</button>';
   const del = tk.custom ? '<button class="tplay delcustom" aria-label="删除临时任务">'+icon('trash')+'</button>' : '';
   return `<div class="task ${done?'done':''}" ${compact?'':'style="--i:'+i+'"'} data-key="${tk.key}" data-wd="${wd}" data-date="${ds}">
@@ -1235,6 +1280,54 @@ function taskRow(tk, ds, wd, i, compact){
     <div class="tier ${tier.cls}"><i></i>${tier.label}</div>
     ${play}${del}
   </div>`;
+}
+
+function parseMin(t){
+  const m = String(t||"").match(/(\d{1,2}):(\d{2})/);
+  return m ? (+m[1])*60 + (+m[2]) : 0;
+}
+function fmtMin2(m){ return pad2(Math.floor(m/60)) + ":" + pad2(m%60); }
+/* 按课表重排一天：重任务只进空档，轻任务（英语/剪辑/习惯）可进水课 */
+function reflowPlan(wd){
+  const plan = planFor(wd).slice();
+  if(!plan.length) return plan;
+  const cls = (classesFor(wd)||[]).map(c=> ({ c:c, r:classRange(c) })).filter(x=> x.r);
+  const windows = [];
+  let cur = 7*60;
+  cls.slice().sort((a,b)=> a.r.s - b.r.s).forEach(x=>{
+    if(x.r.s > cur) windows.push({ a:cur, b:x.r.s, kind:"free" });
+    cur = Math.max(cur, x.r.e);
+  });
+  if(cur < 22*60+30) windows.push({ a:cur, b:22*60+30, kind:"free" });
+  cls.filter(x=> x.c.elec).forEach(x=> windows.push({ a:x.r.s, b:x.r.e, kind:"water" }));
+  windows.sort((x,y)=> x.a - y.a);
+  const light = t => t.tier==="eng" || t.tier==="edit" || t.tier==="habit";
+  const ordered = plan.map((t,i)=> ({t,i}))
+    .sort((x,y)=> (light(x.t)?1:0) - (light(y.t)?1:0) || x.i - y.i)
+    .map(o=> o.t);
+  let cursor = 7*60;
+  ordered.forEach(t=>{
+    const dur = Math.min(t.min || 45, 120);
+    let pick = null;
+    for(const w of windows){
+      if(w.b <= cursor) continue;
+      if(w.kind === "water" && !light(t)) continue;
+      const s = Math.max(w.a, cursor);
+      if(w.b - s >= dur){ pick = s; break; }
+    }
+    if(pick == null) return;
+    t.t = fmtMin2(pick) + "–" + fmtMin2(pick + dur);
+    cursor = pick + dur + 5;
+  });
+  return plan;
+}
+function reflowDay(wd){
+  const sem = activeSem();
+  if(!sem.plan) sem.plan = {};
+  sem.plan[wd] = reflowPlan(wd);
+  saveSched();
+  buildWeek(); buildToday();
+  toast("已按课表重排 " + DAY_S[wd]);
 }
 
 function classRange(c){
@@ -1500,6 +1593,7 @@ function buildWeek(){
         ${edit ? `<div class="edit-acts">
             <button class="addtask" data-add-class="${wd}">${icon('plus')}添加课程</button>
             <button class="addtask" data-add-task="${wd}">${icon('plus')}添加任务</button>
+            <button class="addtask" data-reflow="${wd}">${icon('refresh')}按课表重排</button>
           </div>` : ""}
       </div></div>
     </div>`;
@@ -2399,6 +2493,46 @@ function applyTheme(theme){
   if(meta) meta.setAttribute("content", dark ? "#111214" : "#f4f2ec");
 }
 
+/* 自定义背景（本机压缩后存 localStorage） */
+const BG_KEY = "study_bg_v1";
+function applyBg(){
+  const v = localStorage.getItem(BG_KEY);
+  if(v){
+    document.documentElement.style.setProperty("--bg", 'url("' + v + '")');
+    document.body.classList.add("has-bg");
+  }else{
+    document.documentElement.style.removeProperty("--bg");
+    document.body.classList.remove("has-bg");
+  }
+}
+function setBgFromFile(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ toast("请选择图片文件"); return; }
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = ()=>{
+    const max = 1600;
+    const s = Math.min(1, max / Math.max(img.width, img.height));
+    const cv = document.createElement("canvas");
+    cv.width = Math.max(1, Math.round(img.width * s));
+    cv.height = Math.max(1, Math.round(img.height * s));
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    URL.revokeObjectURL(url);
+    let data = null;
+    try { data = cv.toDataURL("image/jpeg", 0.82); } catch(e){ data = null; }
+    if(!data){ toast("这张图读不了，换一张试试"); return; }
+    try {
+      localStorage.setItem(BG_KEY, data);
+      applyBg();
+      toast("背景已更新");
+    } catch(e){
+      toast("图片太大，换一张小一点的");
+    }
+  };
+  img.onerror = ()=>{ URL.revokeObjectURL(url); toast("图片加载失败"); };
+  img.src = url;
+}
+
 function switchView(name){
   state.view = name;
   $$(".view").forEach(v=> v.classList.toggle("active", v.id === "view-"+name));
@@ -2568,6 +2702,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const saved = localStorage.getItem(THEME_KEY) ||
     (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   applyTheme(saved);
+  applyBg();
+  $("#bgPickBtn").addEventListener("click", ()=> $("#bgInput").click());
+  $("#bgInput").addEventListener("change", e=>{
+    setBgFromFile(e.target.files && e.target.files[0]);
+    e.target.value = "";
+  });
+  $("#bgClearBtn").addEventListener("click", ()=>{
+    localStorage.removeItem(BG_KEY);
+    applyBg();
+    toast("已恢复默认背景");
+  });
 
   /* exam date */
   $("#examInput").value = localStorage.getItem(EXAM_KEY) || DEFAULT_EXAM;
@@ -2633,6 +2778,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
       if(ac){ openClassForm(Number(ac.dataset.addClass), null); return; }
       const at = e.target.closest("[data-add-task]");
       if(at){ openTaskForm(Number(at.dataset.addTask), null); return; }
+      const rf = e.target.closest("[data-reflow]");
+      if(rf){ reflowDay(Number(rf.dataset.reflow)); return; }
       const ec = e.target.closest("[data-edit-class]");
       if(ec){ const p = ec.dataset.editClass.split(":"); openClassForm(Number(p[0]), Number(p[1])); return; }
       const et = e.target.closest("[data-edit-task]");

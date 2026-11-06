@@ -168,6 +168,7 @@ main{padding:0 16px 24px}
 .cf{font-size:9px;line-height:1.5;padding:0 5px;border-radius:4px;border:1px solid currentColor;
   color:var(--core);margin-left:6px;letter-spacing:.02em;flex:0 0 auto}
 .cf.tight{color:#a9781f}
+.cf.water{color:var(--eng)}
 .planwarn{display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:11px 13px;border-radius:12px;
   background:rgba(168,73,44,.07);border:1px solid rgba(168,73,44,.22);color:var(--ink-2);font-size:12px;line-height:1.5}
 .planwarn b{color:var(--core);font-weight:600}
@@ -584,7 +585,10 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
     <section class="view" id="view-week">
       <div class="week-top">
         <span class="wk-sem" id="wkSem">—</span>
-        <button class="btn ghost sm" id="editWeekBtn">编辑课表</button>
+        <span style="display:flex;gap:7px">
+          <button class="btn ghost sm" id="allCoursesBtn">全部课程</button>
+          <button class="btn ghost sm" id="editWeekBtn">编辑课表</button>
+        </span>
       </div>
       <div class="week-tip tiny" id="weekTip">点任意一天展开，查看当天课程与自习任务</div>
       <div class="week" id="weekList"></div>
@@ -850,34 +854,36 @@ const DAILY = [
 ];
 
 const DEFAULT_CLASSES = {
-  1:[{t:"14:00–15:35", n:"体育-1",         r:"东一体育场", from:"2026-10-05", to:"2026-12-28"},
-     {t:"15:55–17:30", n:"军事理论",        r:"HC-阶2",   from:"2026-11-09", to:"2026-12-28"}],
-  2:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-302",   from:"2026-10-06", to:"2026-12-29"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true, from:"2026-10-06", to:"2026-12-29"},
-     {t:"15:55–17:30", n:"工程图学",        r:"HA-203",   from:"2026-10-06", to:"2026-12-08"},
-     {t:"19:00–20:35", n:"校园导论",        r:"HB-107",   from:"2026-10-06", to:"2026-10-27"}],
-  3:[{t:"14:00–15:35", n:"高等数学A-1",    r:"HB-204",   from:"2026-10-07", to:"2026-12-30"},
-     {t:"15:55–17:30", n:"C/C++语言程序设计A", r:"HF-机房18", from:"2026-10-07", to:"2026-12-16"},
-     {t:"19:00–20:35", n:"心灵导航",        r:"冀101",    from:"2026-10-14", to:"2026-12-02"}],
-  4:[{t:"08:30–10:05", n:"大学英语-1",     r:"HC-202",   from:"2026-10-08", to:"2026-10-22"},
-     {t:"10:25–12:00", n:"工程图学",        r:"HB-301",   from:"2026-10-08", to:"2026-12-10"},
-     {t:"15:55–17:30", n:"线性代数A",       r:"HA-301",   from:"2026-10-08", to:"2026-11-19"},
-     {t:"19:00–20:35", n:"学科导论",        r:"HA-303",   from:"2026-10-15", to:"2026-11-05"},
-     {t:"19:00–20:35", n:"形势与政策1",     r:"待定",     from:"2026-11-19", to:"2026-11-19"}],
-  5:[{t:"08:30–10:05", n:"C/C++语言程序设计A", r:"HF-机房11", from:"2026-10-09", to:"2026-12-18"},
-     {t:"10:25–12:00", n:"中国近现代史纲要", r:"HE-301", elec:true, from:"2026-10-09", to:"2026-11-20"},
-     {t:"15:55–17:30", n:"高等数学A-1",    r:"HB-206",   from:"2026-10-09", to:"2027-01-01"}],
-  6:[{t:"08:30–10:05", n:"高等数学A-1",    r:"HB-105",   from:"2026-10-10", to:"2026-12-19"},
-     {t:"10:25–12:00", n:"线性代数A",       r:"HA-101",   from:"2026-10-10", to:"2026-11-21"},
-     {t:"14:00–15:35", n:"大学生健康素养大讲堂", r:"线上", elec:true, from:"2026-10-10", to:"2026-11-28"}],
+  1:[{t:"14:00–15:35", n:"体育-1",           r:"东一体育场", weeks:"4,6-18"},
+     {t:"15:55–17:30", n:"军事理论",          r:"HC-阶2",    weeks:"11-18"}],
+  2:[{t:"08:30–10:05", n:"大学英语-1",       r:"HC-302",    weeks:"4,6-18"},
+     {t:"10:25–12:00", n:"中国近现代史纲要",  r:"HE-301", elec:true, weeks:"4,6-18"},
+     {t:"15:55–17:30", n:"工程图学",          r:"HA-203",    weeks:"6-15"},
+     {t:"19:00–20:35", n:"校园导论",          r:"HB-107",    weeks:"6-9"}],
+  3:[{t:"14:00–15:35", n:"高等数学A-1",      r:"HB-204",    weeks:"4,6-12"},
+     {t:"15:55–17:30", n:"C/C++语言程序设计A", r:"HF-机房18", weeks:"4,6-16"},
+     {t:"19:00–20:35", n:"心灵导航",          r:"冀101",     weeks:"7-14"}],
+  4:[{t:"08:30–10:05", n:"大学英语-1",       r:"HC-202",    weeks:"4,6-8"},
+     {t:"10:25–12:00", n:"工程图学",          r:"HB-301",    weeks:"6-15"},
+     {t:"14:00–15:35", n:"高等数学A-1",      r:"HB-204",    weeks:"13-18"},
+     {t:"15:55–17:30", n:"线性代数A",         r:"HA-301",    weeks:"4,6-12"},
+     {t:"19:00–20:35", n:"学科导论",          r:"HA-303",    weeks:"7-8"}],
+  5:[{t:"08:30–10:05", n:"C/C++语言程序设计A", r:"HF-机房11", weeks:"4,6-16"},
+     {t:"10:25–12:00", n:"中国近现代史纲要",  r:"HE-301", elec:true, weeks:"4,6-12"},
+     {t:"15:55–17:30", n:"高等数学A-1",      r:"HB-206",    weeks:"4,6-12"},
+     {t:"19:00–20:35", n:"学科导论",          r:"HA-301",    weeks:"9-10"}],
+  6:[{t:"08:30–10:05", n:"高等数学A-1",      r:"HB-105",    weeks:"4,6-18"},
+     {t:"10:25–12:00", n:"线性代数A",         r:"HA-101",    weeks:"4,6-12"},
+     {t:"14:00–15:35", n:"大学生健康素养大讲堂", r:"线上", elec:true, weeks:"6-13"},
+     {t:"15:55–17:30", n:"高等数学A-1",      r:"HB-206",    weeks:"4,6-18"}],
   7:[]
 };
 
 const DEFAULT_PLAN = {
   1:[
-    {t:"08:15–10:15", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:30–11:30", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
-    {t:"11:45–13:15", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
+    {t:"08:30–10:30", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
+    {t:"10:45–11:45", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
+    {t:"12:00–13:30", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
     {t:"17:45–19:15", s:"英语/四级", d:"听力 + 阅读（军事理论下课后）", tier:"eng",  min:90},
     {t:"20:45–21:45", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
   ],
@@ -888,26 +894,25 @@ const DEFAULT_PLAN = {
     {t:"17:45–18:45", s:"工程图学",  d:"习题",                    tier:"core", min:60}
   ],
   3:[
-    {t:"08:15–10:15", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:30–11:30", s:"线性代数", d:"刷题",                     tier:"core", min:60},
+    {t:"08:30–10:30", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
+    {t:"10:45–11:45", s:"线性代数", d:"刷题",                     tier:"core", min:60},
     {t:"12:00–13:00", s:"工程图学", d:"习题",                     tier:"core", min:60},
     {t:"20:55–21:55", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:60}
   ],
   4:[
-    {t:"12:15–13:15", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60},
-    {t:"13:30–15:30", s:"高等数学",  d:"刷题",          tier:"core", min:120},
-    {t:"17:45–18:45", s:"C/C++",    d:"编程练习",      tier:"core", min:60}
+    {t:"12:15–13:45", s:"高等数学",  d:"刷题",          tier:"core", min:90},
+    {t:"17:45–18:45", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60}
   ],
   5:[
     {t:"10:25–12:00", s:"英语/四级", d:"水课上看网课 / 真题",  tier:"eng",  min:90},
     {t:"12:15–13:45", s:"线性代数",  d:"刷题",                    tier:"core", min:90},
     {t:"14:00–14:50", s:"工程图学",  d:"习题",                    tier:"core", min:50},
-    {t:"20:45–21:45", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:60}
+    {t:"20:50–21:50", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:60}
   ],
   6:[
     {t:"12:15–13:15", s:"英语/四级", d:"真题模拟 / 精听",          tier:"eng",  min:60},
     {t:"14:00–15:35", s:"剪辑课",    d:"水课上看剪辑课",  tier:"edit", min:90},
-    {t:"15:50–17:50", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120}
+    {t:"18:00–20:00", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120}
   ],
   7:[
     {t:"08:30–10:00", s:"英语/四级", d:"真题 / 听力",      tier:"eng",  min:90},
@@ -935,24 +940,25 @@ function ensureTaskIds(plan){
   return plan;
 }
 
+const SEM_START_DEFAULT = "2026-08-31";
 let sched = loadJSON(SCHED_KEY, null);
 if(!sched || !sched.semesters || !sched.semesters.length){
   sched = { active:"s1", semesters:[{
-    id:"s1", name:"大一上", created: Date.now(),
+    id:"s1", name:"大一上", created: Date.now(), start: SEM_START_DEFAULT,
     classes: clone(DEFAULT_CLASSES), plan: ensureTaskIds(clone(DEFAULT_PLAN))
   }]};
   saveJSON(SCHED_KEY, sched);
 }else{
-  sched.semesters.forEach(s=> ensureTaskIds(s.plan));
+  sched.semesters.forEach(s=>{ ensureTaskIds(s.plan); if(!s.start) s.start = SEM_START_DEFAULT; });
 }
 /* 一次性迁移：修正旧默认课表（含不存在的“军事理论”、缺 19:00 晚课） */
 function migrateSchedule(){
   try {
-    const MIG = "study_sched_mig_v5";
+    const MIG = "study_sched_mig_v7";
     if(localStorage.getItem(MIG)) return;
     const sem = activeSem();
     const hasOld = sem && sem.classes && Object.values(sem.classes).some(list=>
-      (list || []).some(c => c.n === "军事理论" && !c.from)
+      (list || []).some(c => c.n && !c.weeks)
     );
     if(hasOld){
       sem.classes = clone(DEFAULT_CLASSES);
@@ -991,8 +997,26 @@ function saveSched(){ saveJSON(SCHED_KEY, sched); }
 function activeSem(){
   return sched.semesters.find(s=> s.id === sched.active) || sched.semesters[0];
 }
+function parseWeeks(str){
+  const set = new Set();
+  String(str||"").split(",").forEach(part=>{
+    const t = part.trim();
+    const m = t.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(m){ for(let i = +m[1]; i <= +m[2]; i++) set.add(i); }
+    else { const n = parseInt(t, 10); if(n) set.add(n); }
+  });
+  return set;
+}
+function weekOf(ds){
+  const sem = activeSem();
+  const start = (sem && sem.start) || SEM_START_DEFAULT;
+  const a = parseDate(start), b = parseDate(ds);
+  const days = Math.round((b - a) / 86400000);
+  return Math.floor(days / 7) + 1;
+}
 function classInRange(c, ds){
   if(!ds) return true;
+  if(c.weeks) return parseWeeks(c.weeks).has(weekOf(ds));
   if(c.from && ds < c.from) return false;
   if(c.to && ds > c.to) return false;
   return true;
@@ -1737,6 +1761,26 @@ function editTasksHTML(plan, wd){
 
 function closeForm(){ $("#formModal").classList.remove("show"); }
 
+function openAllCourses(){
+  let html = '<h3>全部课程</h3><p class="tiny">按星期排列，含周次和地点；周次为空的表示整学期。</p>';
+  let total = 0;
+  for(let wd = 1; wd <= 7; wd++){
+    const list = classesFor(wd);
+    if(!list.length) continue;
+    total += list.length;
+    html += '<div class="sec" style="margin-top:16px"><span class="sec-k">周' + DAY_S[wd] + '</span><span class="sec-rule"></span></div>';
+    html += '<div class="group">' + list.map(c=>
+      '<div class="srow"><div><div class="srow-t">' + escHTML(c.n) + '</div>' +
+      '<div class="srow-d">' + escHTML(c.t) + ' · ' + (c.weeks ? escHTML(c.weeks) + ' 周' : '整学期') +
+      (c.r ? ' · ' + escHTML(c.r) : '') + '</div></div>' +
+      (c.elec ? '<span class="cf water">水课</span>' : '') + '</div>'
+    ).join('') + '</div>';
+  }
+  if(!total) html += '<div class="empty">还没有课程</div>';
+  html += '<div class="acts"><button class="btn ghost" data-act="cancel">关闭</button></div>';
+  $("#formSheet").innerHTML = html;
+  $("#formModal").classList.add("show");
+}
 function openClassForm(wd, idx){
   editEntry = { type:"class", wd:wd, idx:idx };
   const c = (idx == null) ? {t:"",n:"",r:"",elec:false} : (classesFor(wd)[idx] || {});
@@ -1745,8 +1789,7 @@ function openClassForm(wd, idx){
     '<div class="field"><label>课程名</label><input id="efName" value="'+escHTML(c.n||"")+'" placeholder="例如：大学物理"></div>' +
     '<div class="field"><label>时间</label><input id="efTime" value="'+escHTML(c.t||"")+'" placeholder="例如：08:30–10:05"></div>' +
     '<div class="field"><label>地点</label><input id="efRoom" value="'+escHTML(c.r||"")+'" placeholder="例如：HB-204"></div>' +
-    '<div class="field"><label>开始日期（可选，留空=学期一直有）</label><input type="date" id="efFrom" value="'+escHTML(c.from||"")+'"></div>' +
-    '<div class="field"><label>结束日期（可选，留空=学期一直有）</label><input type="date" id="efTo" value="'+escHTML(c.to||"")+'"></div>' +
+    '<div class="field"><label>周次（如 4,6-18；留空=整学期）</label><input id="efWeeks" value="'+escHTML(c.weeks||"")+'" placeholder="4,6-18"></div>' +
     '<div class="field"><label><input type="checkbox" id="efElec" style="width:auto;margin-right:6px"'+(c.elec?' checked':'')+'>按水课处理（考前突击）</label></div>' +
     '<div class="acts">' +
       (idx!=null ? '<button class="btn danger" data-act="del-class">删除</button>' : '') +
@@ -1763,10 +1806,8 @@ function saveClassForm(){
     r: ($("#efRoom").value||"").trim(),
     elec: $("#efElec").checked
   };
-  const from = ($("#efFrom").value||"").trim();
-  const to = ($("#efTo").value||"").trim();
-  if(from) obj.from = from;
-  if(to) obj.to = to;
+  const weeks = ($("#efWeeks").value||"").trim();
+  if(weeks) obj.weeks = weeks;
   if(!obj.elec) delete obj.elec;
   const wd = editEntry.wd;
   if(!activeSem().classes) activeSem().classes = {};
@@ -2914,6 +2955,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     state.editWeek = !state.editWeek;
     buildWeek();
   });
+  $("#allCoursesBtn").addEventListener("click", openAllCourses);
 
   /* 课程进度 */
   $("#courseProgress").addEventListener("click", e=>{

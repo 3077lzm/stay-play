@@ -860,22 +860,19 @@ const DEFAULT_CLASSES = {
      {t:"10:25–12:00", n:"中国近现代史纲要",  r:"HE-301", elec:true, weeks:"4,6-18"},
      {t:"15:55–17:30", n:"工程图学",          r:"HA-203",    weeks:"6-15"},
      {t:"19:00–20:35", n:"校园导论",          r:"HB-107",    weeks:"6-9"}],
-  3:[{t:"14:00–15:35", n:"高等数学A-1",      r:"HB-204",    weeks:"4,6-12"},
+  3:[{t:"14:00–15:35", n:"高等数学A-1",      r:"HB-204",    weeks:"4,6-18"},
      {t:"15:55–17:30", n:"C/C++语言程序设计A", r:"HF-机房18", weeks:"4,6-16"},
      {t:"19:00–20:35", n:"心灵导航",          r:"冀101",     weeks:"7-14"}],
   4:[{t:"08:30–10:05", n:"大学英语-1",       r:"HC-202",    weeks:"4,6-8"},
      {t:"10:25–12:00", n:"工程图学",          r:"HB-301",    weeks:"6-15"},
-     {t:"14:00–15:35", n:"高等数学A-1",      r:"HB-204",    weeks:"13-18"},
      {t:"15:55–17:30", n:"线性代数A",         r:"HA-301",    weeks:"4,6-12"},
-     {t:"19:00–20:35", n:"学科导论",          r:"HA-303",    weeks:"7-8"}],
+     {t:"19:00–20:35", n:"学科导论",          r:"HA-303",    weeks:"7-10"}],
   5:[{t:"08:30–10:05", n:"C/C++语言程序设计A", r:"HF-机房11", weeks:"4,6-16"},
      {t:"10:25–12:00", n:"中国近现代史纲要",  r:"HE-301", elec:true, weeks:"4,6-12"},
-     {t:"15:55–17:30", n:"高等数学A-1",      r:"HB-206",    weeks:"4,6-12"},
-     {t:"19:00–20:35", n:"学科导论",          r:"HA-301",    weeks:"9-10"}],
-  6:[{t:"08:30–10:05", n:"高等数学A-1",      r:"HB-105",    weeks:"4,6-18"},
-     {t:"10:25–12:00", n:"线性代数A",         r:"HA-101",    weeks:"4,6-12"},
-     {t:"14:00–15:35", n:"大学生健康素养大讲堂", r:"线上", elec:true, weeks:"6-13"},
      {t:"15:55–17:30", n:"高等数学A-1",      r:"HB-206",    weeks:"4,6-18"}],
+  6:[{t:"08:30–10:05", n:"高等数学A-1",      r:"HB-105",    weeks:"4,6-16"},
+     {t:"10:25–12:00", n:"线性代数A",         r:"HA-101",    weeks:"4,6-12"},
+     {t:"14:00–15:35", n:"大学生健康素养大讲堂", r:"线上", elec:true, weeks:"6-13"}],
   7:[]
 };
 
@@ -954,13 +951,20 @@ if(!sched || !sched.semesters || !sched.semesters.length){
 /* 一次性迁移：修正旧默认课表（含不存在的“军事理论”、缺 19:00 晚课） */
 function migrateSchedule(){
   try {
-    const MIG = "study_sched_mig_v7";
+    const MIG = "study_sched_mig_v9";
     if(localStorage.getItem(MIG)) return;
     const sem = activeSem();
-    const hasOld = sem && sem.classes && Object.values(sem.classes).some(list=>
-      (list || []).some(c => c.n && !c.weeks)
-    );
-    if(hasOld){
+    const flat = sem && sem.classes ? Object.values(sem.classes).flat() : [];
+    const list = (wd)=> (sem && sem.classes && sem.classes[wd]) || [];
+    const any = (wd, fn)=> list(wd).some(fn);
+    const need =
+      flat.some(c => c.n && !c.weeks) ||
+      any(3, c => c.n === "高等数学A-1" && c.weeks === "4,6-12") ||
+      any(4, c => c.n === "高等数学A-1" && String(c.t).indexOf("14:00") === 0) ||
+      any(5, c => c.n === "学科导论" && String(c.t).indexOf("19:00") === 0) ||
+      any(6, c => c.n === "高等数学A-1" && String(c.t).indexOf("15:55") === 0) ||
+      any(6, c => c.n === "高等数学A-1" && String(c.t).indexOf("08:30") === 0 && c.weeks === "4,6-18");
+    if(need){
       sem.classes = clone(DEFAULT_CLASSES);
       sem.plan = ensureTaskIds(clone(DEFAULT_PLAN));
       const monday = mondayOf(today());

@@ -117,19 +117,22 @@ main{padding:0 14px 26px}
 
 /* hero */
 .hero{padding:2px 2px 0}
-.hero-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hero-greet{font-size:12.5px;color:var(--ink-2);margin:2px 0 8px;font-weight:500;letter-spacing:.01em}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hero-kick{font-size:10.5px;letter-spacing:.12em;color:var(--mute);font-weight:600}
 .bigdate{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:-.3px;line-height:1.1;margin-top:5px}
-.pctbox{text-align:right;flex:0 0 auto}
-.num{font-family:var(--serif);font-size:33px;font-weight:600;line-height:1;
-  font-variant-numeric:tabular-nums;letter-spacing:-.5px}
-.num b{font-weight:600}
-.num i{font-style:normal;font-size:.56em;color:var(--mute);margin-left:1px;font-weight:500;vertical-align:.06em}
+.ringwrap{position:relative;width:88px;height:88px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.ring{position:absolute;inset:0;width:88px;height:88px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.ring-bg{stroke:var(--surface-2)}
+.ring-fg{stroke:var(--accent);stroke-dasharray:226.19;stroke-dashoffset:226.19;transition:stroke-dashoffset .6s var(--ease)}
+.ring-num{position:relative;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.5px;color:var(--ink)}
+.ring-num i{font-style:normal;font-size:.55em;color:var(--mute);margin-left:1px;font-weight:500}
+.ring-sub{position:absolute;bottom:12px;font-size:9.5px;color:var(--mute);font-variant-numeric:tabular-nums}
 .num.bump{animation:bump .34s var(--ease-spring)}
 @keyframes bump{0%{transform:scale(1)}42%{transform:scale(1.09)}100%{transform:scale(1)}}
-.pct-sub{font-size:10.5px;color:var(--mute);margin-top:5px;font-variant-numeric:tabular-nums}
-.meter{height:4px;border-radius:3px;background:var(--surface-2);overflow:hidden;margin-top:14px}
-.meter i{display:block;height:100%;border-radius:3px;background:var(--accent);width:0;transition:width .5s var(--ease)}
+.nowline-hero{margin-top:14px}
 .hero-meta{display:flex;align-items:center;gap:14px;margin-top:12px;padding-bottom:14px;flex-wrap:wrap;border-bottom:1px solid var(--hair)}
 .meta{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2)}
 .meta svg{width:14px;height:14px;color:var(--mute)}
@@ -284,6 +287,23 @@ main{padding:0 14px 26px}
   border:1px solid var(--hair);color:var(--mute);transition:all .3s var(--ease)}
 .badge svg{width:12px;height:12px}
 .badge.got{color:var(--accent);border-color:var(--accent);background:rgba(var(--accent-rgb),.07)}
+.badge.unlock{animation:badgePop .6s var(--ease-spring)}
+@keyframes badgePop{0%{transform:scale(1)}35%{transform:scale(1.18)}70%{transform:scale(.97)}100%{transform:scale(1)}}
+
+/* 成就解锁弹层 */
+.achieve{position:fixed;left:50%;top:50%;z-index:80;transform:translate(-50%,-50%) scale(.9);opacity:0;
+  pointer-events:none;background:var(--surface);border:1px solid var(--hair);border-radius:20px;
+  padding:26px 28px;text-align:center;box-shadow:0 18px 50px -18px rgba(20,22,26,.4);max-width:300px;
+  transition:opacity .3s var(--ease), transform .4s var(--ease-spring)}
+.achieve.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.achieve .a-medal{width:54px;height:54px;border-radius:50%;margin:0 auto 12px;background:var(--accent);
+  color:var(--accent-ink);display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px -8px rgba(var(--accent-rgb),.8);animation:medalIn .55s var(--ease-spring)}
+.achieve .a-medal svg{width:28px;height:28px}
+@keyframes medalIn{0%{transform:scale(0) rotate(-20deg)}60%{transform:scale(1.12) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+.achieve .a-kick{font-size:11px;letter-spacing:.16em;color:var(--mute);font-weight:700}
+.achieve .a-name{font-size:19px;font-weight:700;margin-top:6px;letter-spacing:-.2px}
+.achieve .a-desc{font-size:12px;color:var(--ink-2);margin-top:6px;line-height:1.6}
 
 /* heatmap */
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;
@@ -600,17 +620,22 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
     <!-- ============ TODAY ============ -->
     <section class="view active" id="view-today">
       <div class="hero">
+        <div class="hero-greet" id="heroGreet">你好</div>
         <div class="hero-top">
           <div>
             <div class="hero-kick" id="todayKick">TODAY</div>
             <div class="bigdate" id="todayDate">—</div>
           </div>
-          <div class="pctbox">
-            <div class="num" id="pctNum"><b>0</b><i>%</i></div>
-            <div class="pct-sub" id="pctSub">0 / 0 项</div>
+          <div class="ringwrap">
+            <svg class="ring" viewBox="0 0 84 84">
+              <circle class="ring-bg" cx="42" cy="42" r="36"/>
+              <circle class="ring-fg" id="ringFg" cx="42" cy="42" r="36"/>
+            </svg>
+            <div class="ring-num"><b id="pctNum">0</b><i>%</i></div>
+            <div class="ring-sub" id="pctSub">0 / 0</div>
           </div>
         </div>
-        <div class="meter"><i id="meterFill"></i></div>
+        <div class="nowline nowline-hero" id="nowClass"></div>
         <div class="hero-meta" id="heroMeta"></div>
       </div>
 
@@ -618,7 +643,6 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
       <div id="todayDates"></div>
 
       <div class="sec"><span class="sec-k">今日课程</span><span class="sec-rule"></span></div>
-      <div class="nowline" id="nowClass"></div>
       <div class="card" id="todayClasses"></div>
 
       <div class="sec"><span class="sec-k">学习目标 · 时长</span><span class="sec-rule"></span><span class="sec-n" id="todayCount">0/0</span></div>
@@ -844,6 +868,7 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
 <div class="modal" id="courseModal"><div class="sheet" id="courseSheet"></div></div>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
 <div class="toast" id="toast"></div>
+<div class="achieve" id="achieve"></div>
 
 <script>
 "use strict";
@@ -877,7 +902,8 @@ const ICONS = {
   close:'<path d="M6 6l12 12M18 6L6 18"/>',
   arrow:'<path d="M5 12h13M13 7l5 5-5 5"/>',
   book:'<path d="M4.4 5.2A2.2 2.2 0 0 1 6.6 3h11v16.4H6.6a2.2 2.2 0 0 0-2.2 2.2z"/><path d="M4.4 5.2v14.2"/>',
-  bolt2:'<path d="M13 2 4.5 13.5H11L9.5 22 18.5 10H12z"/>'
+  bolt2:'<path d="M13 2 4.5 13.5H11L9.5 22 18.5 10H12z"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4.5a2 2 0 0 0 0 4H7M17 5h2.5a2 2 0 0 1 0 4H17"/>'
 };
 function icon(name, cls){
   return '<svg class="'+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
@@ -941,6 +967,8 @@ let journalMap= loadJSON(JOURNAL_KEY, {});
 let restMap   = loadJSON(REST_KEY, {});
 let customMap = loadJSON(CUSTOM_KEY, {});
 let xpState  = loadJSON(XP_KEY, { total:0, today:{ ds:"", gained:0 } });
+const ACH_KEY = "study_ach_v1";
+let unlocked = loadJSON(ACH_KEY, {});
 
 /* 旧版备份只有打卡，没有这几类；导出时统一带上 */
 function saveData(){ saveJSON(TKEY, data); }
@@ -1627,8 +1655,17 @@ function renderTodayDates(){
   }).join("") + '</div>';
 }
 
+function greet(){
+  const h = new Date().getHours();
+  if(h < 5) return "夜深了，注意休息";
+  if(h < 11) return "早上好";
+  if(h < 14) return "中午好";
+  if(h < 18) return "下午好";
+  return "晚上好";
+}
 function buildToday(){
   const t = today(), wd = weekdayOf(t), ds = dateKey(t);
+  $("#heroGreet").textContent = greet() + " · 今天也要加油";
   $("#todayKick").textContent = "TODAY · 周" + DAY_S[wd];
   $("#todayDate").textContent = (t.getMonth()+1) + "月" + t.getDate() + "日";
   $("#nowClass").innerHTML = nowClassInfo().html;
@@ -1660,8 +1697,11 @@ function refreshHero(){
   const p = dayProgress(ds, wd);
   const pct = p.total ? Math.round(p.done/p.total*100) : 0;
   $("#pctNum").innerHTML = "<b>" + pct + "</b><i>%</i>";
-  $("#pctSub").textContent = p.done + "/" + p.total + " 项";
-  $("#meterFill").style.width = pct + "%";
+  $("#pctSub").textContent = p.done + " / " + p.total;
+  // 进度环：周长 2π×36 ≈ 226.19
+  const C = 226.19;
+  const ring = $("#ringFg");
+  if(ring) ring.style.strokeDashoffset = (C * (1 - pct/100)).toFixed(2);
   $("#todayCount").textContent = p.done + "/" + p.total;
   $("#journalDate").textContent = (t.getMonth()+1) + "/" + t.getDate();
 
@@ -1676,7 +1716,7 @@ function refreshHero(){
 
 function bumpPct(){
   const el = $("#pctNum");
-  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+  if(el){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
 }
 
 function applyDone(dateStr, wd, key){
@@ -1694,6 +1734,7 @@ function onToggle(el){
   toggleTask(ds, wd, key);
   el.classList.toggle("done", isDone(ds, wd, key));
   refreshHero(); bumpPct(); refreshWeekDay(ds);
+  checkAchievements();
   if(state.view === "stats") buildStats();
 }
 
@@ -1702,12 +1743,15 @@ function onToggle(el){
    ============================================================ */
 const focus = {
   task:null, phase:"ready", mode:"countdown", target:1500,
-  elapsed:0, paused:false, tick:null, last:0
+  elapsed:0, paused:false, tick:null, last:0,
+  breakAfter:true,   // 是否专注结束后自动进入休息
+  breakMin:5,        // 休息时长（分钟）
+  onBreak:false      // 当前是否处于休息阶段
 };
 const MODES = [
-  {id:"countdown", label:"25 分钟", sec:1500},
-  {id:"countdown", label:"45 分钟", sec:2700},
-  {id:"countup",   label:"正计时",  sec:0}
+  {id:"countdown", label:"25 分钟", sec:1500, brk:5},
+  {id:"countdown", label:"45 分钟", sec:2700, brk:10},
+  {id:"countup",   label:"正计时",  sec:0, brk:0}
 ];
 
 function openFocus(el){
@@ -1719,7 +1763,7 @@ function openFocus(el){
   const tk = tasksFor(wd, ds).find(t=> t.key === key) || {d:"专注", s:""};
   focus.task = {date:ds, wd:wd, key:key, title:tk.d, subject:tk.s};
   focus.phase = "ready"; focus.mode = "countdown"; focus.target = 1500;
-  focus.elapsed = 0; focus.paused = false;
+  focus.elapsed = 0; focus.paused = false; focus.onBreak = false; focus.breakMin = 5;
   renderFocus();
   $("#focusModal").classList.add("show");
 }
@@ -1735,8 +1779,26 @@ function renderFocus(){
       '<div class="modechips">' +
         MODES.map((m,i)=>`<button class="modechip ${(focus.mode===m.id && focus.target===m.sec)?'on':''}" data-mode="${i}">${m.label}</button>`).join("") +
       '</div>' +
+      '<div class="focus-note tiny" style="text-align:center;margin-top:8px">专注结束后自动进入 ' + (focus.mode==="countup" ? "0" : (MODES.find(m=>m.sec===focus.target)||{brk:5}).brk) + ' 分钟休息</div>' +
       '<div class="focus-acts"><button class="btn ghost" data-act="cancel">取消</button>' +
       '<button class="btn primary" data-act="start">开始专注</button></div>';
+    return;
+  }
+
+  if(focus.onBreak){
+    const remain = Math.max(0, focus.target - focus.elapsed);
+    sheet.innerHTML =
+      '<div class="focus-kick" style="color:var(--accent)">☕ 休息一下</div>' +
+      '<div class="focus-title">起来走走、喝口水</div>' +
+      '<div class="focus-time" id="focusClock">'+fmtClock(remain)+'</div>' +
+      '<div class="focus-track"><i id="focusBar" style="width:'+Math.min(100, focus.elapsed/focus.target*100)+'%"></i></div>' +
+      '<div class="focus-acts">' +
+        '<button class="btn ghost" data-act="pause">'+(focus.phase==="paused"?"继续":"暂停")+'</button>' +
+        '<button class="btn primary" data-act="skip-break">跳过休息</button>' +
+      '</div>' +
+      '<div class="focus-acts" style="margin-top:9px">' +
+        '<button class="btn danger" data-act="stop">结束并记录</button>' +
+      '</div>';
     return;
   }
 
@@ -1768,7 +1830,14 @@ function tickFocus(){
   const now = Date.now();
   focus.elapsed += (now - focus.last)/1000;
   focus.last = now;
-  if(focus.mode === "countdown" && focus.elapsed >= focus.target){
+  if(focus.onBreak){
+    // 休息阶段到点 → 提示回专注，并关闭
+    if(focus.elapsed >= focus.target){
+      toast("休息结束，起来继续吧");
+      closeFocus();
+      return;
+    }
+  }else if(focus.mode === "countdown" && focus.elapsed >= focus.target){
     focus.elapsed = focus.target;
     finishFocus(true);
     return;
@@ -1805,8 +1874,31 @@ function finishFocus(auto){
               title:t.title, minutes:mins, mode:focus.mode});
   addXp(Math.round(mins/5));  // 每 5 分钟专注 +1 EXP
   applyDone(t.date, t.wd, t.key);
-  closeFocus();
+  checkAchievements();
   toast(auto ? ("专注完成，已自动打卡 · " + mins + " 分钟") : ("已记录 " + mins + " 分钟"));
+  // 番茄：专注结束 → 自动进入休息
+  if(focus.breakAfter && focus.mode === "countdown"){
+    startBreak();
+  }else{
+    closeFocus();
+  }
+}
+function startBreak(){
+  const m = focus.breakMin || 5;
+  if(m <= 0){ closeFocus(); return; }
+  focus.onBreak = true;
+  focus.target = m * 60;
+  focus.elapsed = 0;
+  focus.paused = false;
+  focus.phase = "running";
+  focus.last = Date.now();
+  if(focus.tick) clearInterval(focus.tick);
+  focus.tick = setInterval(tickFocus, 500);
+  renderFocus();
+  vibrate();
+}
+function vibrate(){
+  try{ if(navigator.vibrate) navigator.vibrate([80,40,80]); }catch(e){}
 }
 function stopFocus(){
   const mins = Math.round(focus.elapsed/60);
@@ -2318,23 +2410,55 @@ function buildStats(){
 }
 
 function buildBadges(){
+  checkAchievements();
   const streak = longestStreak();
   const ws = weekStats();
   const total = totalCompleted();
   const focusMin = totalFocusMinutes();
   const list = [
-    {name:"首次打卡", got: total > 0},
-    {name:"连续 3 天", got: streak >= 3},
-    {name:"连续 7 天", got: streak >= 7},
-    {name:"连续 14 天", got: streak >= 14},
-    {name:"连续 30 天", got: streak >= 30},
-    {name:"本周全勤", got: ws.total > 0 && ws.pct === 100},
-    {name:"累计 100 项", got: total >= 100},
-    {name:"专注 10 小时", got: focusMin >= 600}
+    {id:"first",  name:"首次打卡", desc:"完成第一次打卡", got: total > 0},
+    {id:"s3",     name:"连续 3 天", desc:"连续打卡 3 天", got: streak >= 3},
+    {id:"s7",     name:"连续 7 天", desc:"连续打卡 7 天", got: streak >= 7},
+    {id:"s14",    name:"连续 14 天", desc:"连续打卡 14 天", got: streak >= 14},
+    {id:"s30",    name:"连续 30 天", desc:"连续打卡 30 天", got: streak >= 30},
+    {id:"week",   name:"本周全勤", desc:"本周每天都有打卡", got: ws.total > 0 && ws.pct === 100},
+    {id:"total100", name:"累计 100 项", desc:"累计完成 100 个任务", got: total >= 100},
+    {id:"focus10h", name:"专注 10 小时", desc:"累计专注 10 小时", got: focusMin >= 600}
   ];
   $("#badges").innerHTML = list.map(b=>
     `<span class="badge ${b.got?'got':''}">${icon(b.got?'check':'lock')}${b.name}</span>`
   ).join("");
+}
+function checkAchievements(){
+  const streak = longestStreak();
+  const ws = weekStats();
+  const total = totalCompleted();
+  const focusMin = totalFocusMinutes();
+  const list = [
+    {id:"first",  name:"首次打卡", desc:"完成第一次打卡", got: total > 0},
+    {id:"s3",     name:"连续 3 天", desc:"连续打卡 3 天", got: streak >= 3},
+    {id:"s7",     name:"连续 7 天", desc:"连续打卡 7 天", got: streak >= 7},
+    {id:"s14",    name:"连续 14 天", desc:"连续打卡 14 天", got: streak >= 14},
+    {id:"s30",    name:"连续 30 天", desc:"连续打卡 30 天", got: streak >= 30},
+    {id:"week",   name:"本周全勤", desc:"本周每天都有打卡", got: ws.total > 0 && ws.pct === 100},
+    {id:"total100", name:"累计 100 项", desc:"累计完成 100 个任务", got: total >= 100},
+    {id:"focus10h", name:"专注 10 小时", desc:"累计专注 10 小时", got: focusMin >= 600}
+  ];
+  list.forEach(b=>{ if(b.got && !unlocked[b.id]){ unlocked[b.id] = Date.now(); unlockAchieve(b); } });
+}
+function unlockAchieve(b){
+  saveJSON(ACH_KEY, unlocked);
+  const el = $("#achieve");
+  if(!el) return;
+  el.innerHTML =
+    '<div class="a-medal">' + icon('trophy') + '</div>' +
+    '<div class="a-kick">成就解锁</div>' +
+    '<div class="a-name">' + escHTML(b.name) + '</div>' +
+    '<div class="a-desc">' + escHTML(b.desc) + '</div>';
+  el.classList.add("show");
+  vibrate();
+  clearTimeout(el._t);
+  el._t = setTimeout(()=> el.classList.remove("show"), 2400);
 }
 
 function buildHeatmap(){
@@ -2634,6 +2758,7 @@ function rateCard(r){
   }else{
     sess.done++;
     addXp(r === 3 ? 6 : (r === 2 ? 4 : 2));
+    checkAchievements();
   }
   sess.pos++;
   sess.revealed = false;
@@ -3224,6 +3349,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     else if(act === "pause") togglePause();
     else if(act === "finish") finishFocus(false);
     else if(act === "stop") stopFocus();
+    else if(act === "skip-break") closeFocus();
   });
 
   /* review 闪卡 */

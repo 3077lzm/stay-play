@@ -31,12 +31,13 @@
   --edit:#6b7838;
   --habit:#6f6a5e;
   --elec:#9a968a;
-  --shadow:0 1px 2px rgba(25,27,31,.045);
+  --shadow:0 1px 2px rgba(25,27,31,.04), 0 5px 16px -8px rgba(25,27,31,.07);
+  --shadow-lift:0 2px 4px rgba(25,27,31,.05), 0 12px 28px -12px rgba(25,27,31,.14);
   --nav-bg:rgba(253,252,249,.86);
+  --navh:58px;
   --bg-wash:rgba(244,242,236,.9);
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-spring:cubic-bezier(.34,1.4,.64,1);
-  --navh:62px;
   --serif:ui-serif,"New York",Georgia,"Songti SC","Noto Serif SC",serif;
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
 }
@@ -46,7 +47,7 @@
   --hair:#26282c; --hair-2:#34373c;
   --accent:#5fa593; --accent-rgb:95,165,147; --accent-ink:#0d1210;
   --core:#cf7051; --eng:#86a3d0; --edit:#a6b86d; --habit:#9d978a; --elec:#7c786c;
-  --shadow:0 1px 2px rgba(0,0,0,.45);
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 6px 18px -8px rgba(0,0,0,.4);
   --nav-bg:rgba(23,25,28,.86);
   --bg-wash:rgba(17,18,20,.86);
 }
@@ -58,7 +59,7 @@ body{
   font-family:var(--sans); background:var(--paper); color:var(--ink);
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   font-variant-numeric:tabular-nums;
-  padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom) + 8px);
+  padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom) + 28px);
   transition:background-color .4s var(--ease), color .4s var(--ease);
 }
 #app{max-width:580px;margin:0 auto;min-height:100vh}
@@ -71,12 +72,15 @@ body.has-bg{
 /* header */
 header{
   position:sticky;top:0;z-index:30;
-  padding:calc(env(safe-area-inset-top) + 12px) 18px 11px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--paper);border-bottom:1px solid transparent;
+  padding:calc(env(safe-area-inset-top) + 11px) 14px 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:rgba(var(--paper-rgb,244,242,236),.82);
+  -webkit-backdrop-filter:saturate(1.7) blur(20px);backdrop-filter:saturate(1.7) blur(20px);
+  border-bottom:1px solid transparent;
   transition:background-color .4s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
 }
-header.scrolled{border-bottom-color:var(--hair);box-shadow:0 10px 30px -24px rgba(20,22,26,.35)}
+header.scrolled{border-bottom-color:var(--hair);box-shadow:0 10px 30px -26px rgba(20,22,26,.5)}
+[data-theme="dark"] header{background:rgba(17,18,20,.72)}
 .brand{display:flex;align-items:center;gap:10px}
 .mark{width:27px;height:27px;border-radius:8px;background:var(--accent);color:var(--accent-ink);
   display:flex;align-items:center;justify-content:center;flex:0 0 auto}
@@ -84,21 +88,28 @@ header.scrolled{border-bottom-color:var(--hair);box-shadow:0 10px 30px -24px rgb
 .brandtxt{display:flex;flex-direction:column;line-height:1.15}
 .wm{font-size:16.5px;font-weight:700;letter-spacing:-.2px}
 .kick{font-size:10.5px;color:var(--mute);letter-spacing:.09em}
-.iconbtn{width:37px;height:37px;border-radius:11px;border:1px solid var(--hair);background:var(--surface);
+.iconbtn{width:37px;height:37px;border-radius:12px;border:1px solid var(--hair);background:var(--surface);
   color:var(--ink-2);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:var(--shadow);
   transition:transform .2s var(--ease-spring), background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease)}
 .iconbtn:active{transform:scale(.92)}
 .iconbtn svg{width:18px;height:18px}
+.xp-pill{display:flex;align-items:center;gap:5px;height:37px;padding:0 12px;border-radius:12px;
+  border:1px solid var(--hair);background:var(--surface);color:var(--accent);
+  font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  box-shadow:var(--shadow);white-space:nowrap;cursor:default}
+.xp-pill svg{width:14px;height:14px}
+.xp-pill .xp-x{color:var(--mute);font-weight:600}
 
-main{padding:0 16px 24px}
+main{padding:0 14px 26px}
 .view{display:none}
 .view.active{display:block;animation:viewIn .42s var(--ease) both}
 @keyframes viewIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 
-.card{background:var(--surface);border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow);
-  transition:background-color .4s var(--ease), border-color .4s var(--ease)}
-.pad{padding:15px 16px}
-.sec{display:flex;align-items:center;gap:9px;margin:28px 2px 12px}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow);
+  transition:background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .3s var(--ease)}
+.pad{padding:16px 17px}
+.sec{display:flex;align-items:center;gap:9px;margin:26px 3px 13px}
 .sec-k{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-2)}
 .sec-k:before{content:"";width:3px;height:11px;border-radius:2px;background:var(--accent);flex:0 0 auto}
 .sec-rule{flex:1;height:1px;background:var(--hair)}
@@ -140,13 +151,14 @@ main{padding:0 16px 24px}
 
 /* tasks */
 .task-list{display:flex;flex-direction:column;gap:7px}
-.task{display:flex;align-items:center;gap:10px;padding:11px 11px;background:var(--surface);
-  border:1px solid var(--hair);border-radius:13px;cursor:pointer;
+.task{display:flex;align-items:center;gap:10px;padding:12px 12px;background:var(--surface);
+  border:1px solid var(--hair);border-radius:15px;cursor:pointer;
+  box-shadow:var(--shadow);
   animation:rise .44s var(--ease) both;animation-delay:calc(var(--i,0) * 32ms);
-  transition:transform .18s var(--ease-spring), opacity .25s var(--ease),
+  transition:transform .18s var(--ease-spring), box-shadow .22s var(--ease), opacity .25s var(--ease),
              background-color .4s var(--ease), border-color .4s var(--ease)}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.task:active{transform:scale(.983)}
+.task:active{transform:scale(.985);box-shadow:var(--shadow-lift)}
 .task.done{opacity:.62}
 .tick{width:23px;height:23px;flex:0 0 auto;border-radius:7px;border:1.6px solid var(--hair-2);
   background:transparent;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
@@ -175,6 +187,11 @@ main{padding:0 16px 24px}
 .planwarn svg{width:16px;height:16px;color:var(--core);flex:0 0 auto}
 .planwarn .btn{margin-left:auto;flex:0 0 auto}
 .planwarn .tiny{margin-top:2px}
+.targetbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:11px 13px;border-radius:12px;
+  background:rgba(var(--accent-rgb),.07);border:1px solid rgba(var(--accent-rgb),.20);color:var(--ink-2);font-size:12px;line-height:1.5}
+.targetbar b{color:var(--accent);font-weight:600}
+.targetbar svg{width:16px;height:16px;color:var(--accent);flex:0 0 auto}
+.targetbar .tiny{margin-top:2px}
 .tplay{width:29px;height:29px;flex:0 0 auto;border-radius:9px;border:1px solid var(--hair);
   background:transparent;color:var(--mute);display:flex;align-items:center;justify-content:center;
   padding:0;cursor:pointer;transition:transform .2s var(--ease-spring), color .25s var(--ease), border-color .25s var(--ease)}
@@ -209,8 +226,9 @@ main{padding:0 16px 24px}
 
 /* week */
 .week{display:flex;flex-direction:column;gap:8px}
-.day{background:var(--surface);border:1px solid var(--hair);border-radius:15px;overflow:hidden;
-  transition:background-color .4s var(--ease), border-color .4s var(--ease)}
+.day{background:var(--surface);border:1px solid var(--hair);border-radius:16px;overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .3s var(--ease)}
 .day.today{border-color:var(--accent)}
 .day-head{width:100%;display:flex;align-items:center;gap:11px;padding:13px 14px;
   background:none;border:none;color:inherit;font-family:inherit;cursor:pointer;text-align:left}
@@ -233,9 +251,19 @@ main{padding:0 16px 24px}
 .day-empty{font-size:11.5px;color:var(--mute);padding:3px 0 1px}
 
 /* stats */
+.levelcard{background:linear-gradient(180deg, rgba(var(--accent-rgb),.13), rgba(var(--accent-rgb),.04));
+  border:1px solid rgba(var(--accent-rgb),.22);border-radius:18px;padding:18px 17px 16px;
+  box-shadow:var(--shadow);text-align:center}
+.levelcard-l{font-size:11px;color:var(--mute);letter-spacing:.12em;font-weight:600}
+.levelcard-v{font-family:var(--serif);font-size:40px;font-weight:600;color:var(--accent);
+  line-height:1.1;margin-top:4px;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.levelcard-bar{height:6px;border-radius:4px;background:rgba(var(--accent-rgb),.14);overflow:hidden;margin:13px auto 9px;max-width:260px}
+.levelcard-bar i{display:block;height:100%;border-radius:4px;background:var(--accent);width:0;transition:width .5s var(--ease)}
+.levelcard-meta{font-size:11px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.levelcard-meta b{color:var(--accent);font-weight:700}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:var(--surface);border:1px solid var(--hair);border-radius:15px;padding:14px 15px;
-  box-shadow:var(--shadow);transition:background-color .4s var(--ease), border-color .4s var(--ease);
+.stat{background:var(--surface);border:1px solid var(--hair);border-radius:16px;padding:15px 16px;
+  box-shadow:var(--shadow);transition:background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .3s var(--ease);
   animation:rise .45s var(--ease) both}
 .stat:nth-child(1){animation-delay:0ms} .stat:nth-child(2){animation-delay:40ms}
 .stat:nth-child(3){animation-delay:80ms} .stat:nth-child(4){animation-delay:120ms}
@@ -277,14 +305,14 @@ main{padding:0 16px 24px}
 
 /* settings */
 .group{background:var(--surface);border:1px solid var(--hair);border-radius:16px;overflow:hidden;
-  box-shadow:var(--shadow);transition:background-color .4s var(--ease), border-color .4s var(--ease)}
+  box-shadow:var(--shadow);transition:background-color .4s var(--ease), border-color .4s var(--ease), box-shadow .3s var(--ease)}
 .srow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 16px}
 .srow + .srow{border-top:1px solid var(--hair)}
 .srow-t{font-size:13.5px;font-weight:600;letter-spacing:-.1px}
 .srow-d{font-size:11px;color:var(--mute);margin-top:3px;line-height:1.5}
-.btn{border:1px solid transparent;border-radius:11px;padding:9px 15px;font-size:12.5px;font-weight:600;
+.btn{border:1px solid transparent;border-radius:12px;padding:10px 16px;font-size:12.5px;font-weight:600;
   cursor:pointer;font-family:inherit;letter-spacing:.02em;
-  transition:transform .18s var(--ease-spring), background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease)}
+  transition:transform .18s var(--ease-spring), background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease)}
 .btn:active{transform:scale(.95)}
 .btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 8px 18px -12px rgba(var(--accent-rgb),.9)}
 .btn.ghost{background:transparent;border-color:var(--hair-2);color:var(--ink-2)}
@@ -300,21 +328,38 @@ input[type=date]{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8p
 .sw input:checked + span{background:var(--accent)}
 .sw input:checked + span:before{transform:translateX(19px)}
 
-/* nav */
-#tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:580px;margin:0 auto;
-  height:calc(var(--navh) + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);
-  background:var(--nav-bg);-webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px);
-  border-top:1px solid var(--hair);display:flex;
-  transition:background-color .4s var(--ease), border-color .4s var(--ease)}
-.nav-ink{position:absolute;top:-1px;left:0;width:20%;height:2px;border-radius:0 0 2px 2px;background:var(--accent);
-  transform:translateX(calc(var(--tab,0) * 100%));transition:transform .44s var(--ease)}
-#tabbar .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  background:none;border:none;color:var(--mute);font-family:inherit;font-size:9.5px;letter-spacing:.03em;
-  cursor:pointer;transition:color .28s var(--ease), transform .28s var(--ease-spring)}
-#tabbar .tab svg{width:19px;height:19px;transition:transform .3s var(--ease-spring)}
+/* nav —— iOS 玻璃质感悬浮栏 */
+#tabbar{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:40;
+  max-width:556px;margin:0 auto;height:var(--navh);
+  display:flex;align-items:center;padding:6px;
+  border-radius:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.64), rgba(255,255,255,.26));
+  -webkit-backdrop-filter:saturate(1.9) blur(28px);backdrop-filter:saturate(1.9) blur(28px);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 8px 32px rgba(25,27,31,.18), inset 0 1px 0 rgba(255,255,255,.8);
+  transition:background .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease)}
+#tabbar::before{content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+  background:radial-gradient(120% 60% at 50% 0%, rgba(255,255,255,.5), rgba(255,255,255,0) 60%)}
+.nav-ink{position:absolute;left:6px;top:6px;height:calc(100% - 12px);width:calc((100% - 12px)/5);
+  border-radius:19px;background:rgba(var(--accent-rgb),.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+  transform:translateX(calc(var(--tab,0) * 100%));transition:transform .44s var(--ease-spring);z-index:0}
+#tabbar .tab{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;background:none;border:none;color:var(--mute);font-family:inherit;
+  font-size:9.5px;letter-spacing:.03em;cursor:pointer;
+  transition:color .28s var(--ease), transform .28s var(--ease-spring)}
+#tabbar .tab svg{width:20px;height:20px;transition:transform .3s var(--ease-spring);
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.08))}
 #tabbar .tab.active{color:var(--accent);font-weight:600}
-#tabbar .tab.active svg{transform:translateY(-1px) scale(1.06)}
+#tabbar .tab.active svg{transform:translateY(-1px) scale(1.08)}
 #tabbar .tab:active{transform:scale(.94)}
+[data-theme="dark"] #tabbar{
+  background:linear-gradient(180deg, rgba(58,62,68,.7), rgba(32,34,38,.55));
+  border-color:rgba(255,255,255,.14);
+  box-shadow:0 8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.14)}
+[data-theme="dark"] #tabbar::before{
+  background:radial-gradient(120% 60% at 50% 0%, rgba(255,255,255,.14), rgba(255,255,255,0) 60%)}
+[data-theme="dark"] .nav-ink{background:rgba(var(--accent-rgb),.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
 
 /* modal / sheet */
 .modal{position:fixed;inset:0;z-index:60;background:rgba(16,18,22,.5);
@@ -505,6 +550,18 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
   background:transparent;color:var(--ink);font-family:inherit;text-align:center;font-variant-numeric:tabular-nums}
 .numinput:focus{outline:none;border-color:var(--accent)}
 
+/* 主题能量色选择器 */
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px;padding:4px 2px 2px}
+.swatch{display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:none;cursor:pointer;
+  font-family:inherit;color:var(--ink-2);font-size:11px;padding:0}
+.swatch-dot{width:38px;height:38px;border-radius:50%;box-shadow:inset 0 -2px 5px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.12);
+  display:flex;align-items:center;justify-content:center;transition:transform .22s var(--ease-spring)}
+.swatch:active .swatch-dot{transform:scale(.9)}
+.swatch.sel{color:var(--accent);font-weight:600}
+.swatch.sel .swatch-dot{box-shadow:0 0 0 2px var(--surface), 0 0 0 4px var(--accent), inset 0 -2px 5px rgba(0,0,0,.14)}
+.swatch .tick{width:16px;height:16px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.swatch .tick svg{width:16px;height:16px}
+
 .date-row{display:flex;align-items:center;gap:10px;padding:9px 0}
 .date-row + .date-row{border-top:1px solid var(--hair)}
 .date-main{flex:1;min-width:0}
@@ -533,7 +590,10 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
         <span class="kick">能源动力 · 大一</span>
       </div>
     </div>
-    <button class="iconbtn" id="themeBtn" aria-label="切换主题"></button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="xp-pill" id="xpPill" title="经验值">⚡ 0 <span class="xp-x">Lv.1</span></span>
+      <button class="iconbtn" id="themeBtn" aria-label="切换主题"></button>
+    </div>
   </header>
 
   <main>
@@ -561,9 +621,7 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
       <div class="nowline" id="nowClass"></div>
       <div class="card" id="todayClasses"></div>
 
-      <div class="sec"><span class="sec-k">自习任务</span><span class="sec-rule"></span><span class="sec-n" id="todayCount">0/0</span></div>
-      <div id="planWarn"></div>
-      <div class="task-list" id="todayTasks"></div>
+      <div class="sec"><span class="sec-k">学习目标 · 时长</span><span class="sec-rule"></span><span class="sec-n" id="todayCount">0/0</span></div>
       <button class="addtask" id="addTaskBtn"></button>
 
       <div class="sec"><span class="sec-k">今日复盘</span><span class="sec-rule"></span><span class="sec-n" id="journalDate"></span></div>
@@ -628,7 +686,14 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
 
     <!-- ============ STATS ============ -->
     <section class="view" id="view-stats">
-      <div class="sgrid" style="margin-top:6px">
+      <div class="levelcard">
+        <div class="levelcard-l">总等级</div>
+        <div class="levelcard-v" id="lvBig">Lv.1</div>
+        <div class="levelcard-bar"><i id="lvFill"></i></div>
+        <div class="levelcard-meta"><span id="lvCur">0</span> / <span id="lvNeed">100</span> EXP · 学生</div>
+      </div>
+
+      <div class="sgrid" style="margin-top:14px">
         <div class="stat"><div class="stat-v" id="stStreak">0</div><div class="stat-k">连续打卡 · 天</div></div>
         <div class="stat"><div class="stat-v" id="stTotal">0</div><div class="stat-k">累计完成 · 项</div></div>
         <div class="stat"><div class="stat-v" id="stWeek">0%</div><div class="stat-k">本周完成率</div></div>
@@ -685,6 +750,10 @@ select.sel{border:1px solid var(--hair-2);border-radius:9px;padding:6px 8px;font
         <div class="srow">
           <div><div class="srow-t">深色模式</div><div class="srow-d">晚上看不刺眼</div></div>
           <label class="sw"><input type="checkbox" id="darkSwitch"><span></span></label>
+        </div>
+        <div class="srow" style="flex-direction:column;align-items:stretch">
+          <div><div class="srow-t">主题能量色</div><div class="srow-d">整个 App 的强调色，随时可换</div></div>
+          <div class="swatches" id="swatches"></div>
         </div>
         <div class="srow">
           <div><div class="srow-t">自定义背景</div><div class="srow-d">从相册选一张图，自动压缩后只存在本机</div></div>
@@ -807,7 +876,8 @@ const ICONS = {
   cards:'<rect x="4.2" y="6.4" width="11.4" height="14.2" rx="2.4"/><path d="M8.4 3.4h9.2a2.2 2.2 0 0 1 2.2 2.2v10.6"/>',
   close:'<path d="M6 6l12 12M18 6L6 18"/>',
   arrow:'<path d="M5 12h13M13 7l5 5-5 5"/>',
-  book:'<path d="M4.4 5.2A2.2 2.2 0 0 1 6.6 3h11v16.4H6.6a2.2 2.2 0 0 0-2.2 2.2z"/><path d="M4.4 5.2v14.2"/>'
+  book:'<path d="M4.4 5.2A2.2 2.2 0 0 1 6.6 3h11v16.4H6.6a2.2 2.2 0 0 0-2.2 2.2z"/><path d="M4.4 5.2v14.2"/>',
+  bolt2:'<path d="M13 2 4.5 13.5H11L9.5 22 18.5 10H12z"/>'
 };
 function icon(name, cls){
   return '<svg class="'+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
@@ -822,7 +892,42 @@ const TICK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const TKEY="study_checkins_v1", THEME_KEY="study_theme_v1", EXAM_KEY="study_exam_v1";
 const SESSIONS_KEY="study_sessions_v1", JOURNAL_KEY="study_journal_v1";
 const REST_KEY="study_rest_v1", CUSTOM_KEY="study_custom_v1";
+const XP_KEY = "study_xp_v1";
 const DEFAULT_EXAM="2027-06-12";
+
+/* 主题能量色：每个颜色提供 accent(强调色) 与 accent-rgb(用于半透明) */
+const ACCENTS = [
+  {id:"forest", name:"墨绿", hex:"#2f5d50", rgb:"47,93,80"},
+  {id:"earth",  name:"地球蓝", hex:"#3d6fb4", rgb:"61,111,180"},
+  {id:"slate",  name:"银灰", hex:"#6b7280", rgb:"107,114,128"},
+  {id:"cyber",  name:"赛博紫", hex:"#7b61ff", rgb:"123,97,255"},
+  {id:"mint",   name:"薄荷绿", hex:"#3fa27a", rgb:"63,162,122"},
+  {id:"gold",   name:"柔光金", hex:"#b58a3c", rgb:"181,138,60"},
+  {id:"orange", name:"落日橙", hex:"#d0703c", rgb:"208,112,60"},
+  {id:"moon",   name:"月光蓝", hex:"#5a7d9a", rgb:"90,125,154"},
+  {id:"sakura", name:"樱粉", hex:"#c86a8a", rgb:"200,106,138"}
+];
+const ACCENT_KEY = "study_accent_v1";
+function applyAccent(id){
+  const a = ACCENTS.find(x=> x.id === id) || ACCENTS[0];
+  const root = document.documentElement;
+  root.style.setProperty("--accent", a.hex);
+  root.style.setProperty("--accent-rgb", a.rgb);
+  // 深色下用亮一点的强调色，浅色下保持原色
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  root.style.setProperty("--accent-ink", dark ? "#0d1210" : "#f7fbf9");
+  localStorage.setItem(ACCENT_KEY, id);
+  renderSwatches();
+}
+function renderSwatches(){
+  const cur = localStorage.getItem(ACCENT_KEY) || "forest";
+  $("#swatches").innerHTML = ACCENTS.map(a=>
+    `<button class="swatch ${a.id===cur?'sel':''}" data-accent="${a.id}">
+       <span class="swatch-dot" style="background:${a.hex}">${a.id===cur ? '<span class="tick">'+TICK_SVG+'</span>' : ''}</span>
+       <span>${a.name}</span>
+     </button>`
+  ).join("");
+}
 
 function loadJSON(k, def){
   try{ const v = JSON.parse(localStorage.getItem(k)); return v == null ? def : v; }
@@ -835,6 +940,7 @@ let sessions  = loadJSON(SESSIONS_KEY, []);
 let journalMap= loadJSON(JOURNAL_KEY, {});
 let restMap   = loadJSON(REST_KEY, {});
 let customMap = loadJSON(CUSTOM_KEY, {});
+let xpState  = loadJSON(XP_KEY, { total:0, today:{ ds:"", gained:0 } });
 
 /* 旧版备份只有打卡，没有这几类；导出时统一带上 */
 function saveData(){ saveJSON(TKEY, data); }
@@ -878,45 +984,46 @@ const DEFAULT_CLASSES = {
 
 const DEFAULT_PLAN = {
   1:[
-    {t:"08:30–10:30", s:"高等数学", d:"预习/网课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:45–11:45", s:"线性代数", d:"概念梳理 + 例题",          tier:"core", min:60},
-    {t:"12:00–13:30", s:"C/C++",    d:"编程练习（写代码）",        tier:"core", min:90},
-    {t:"17:45–19:15", s:"英语/四级", d:"听力 + 阅读（军事理论下课后）", tier:"eng",  min:90},
-    {t:"20:45–21:45", s:"工程图学", d:"画图 / 习题",              tier:"core", min:60}
+    {s:"高等数学",  d:"预习/网课 + 刷题",   tier:"core", min:90},
+    {s:"线性代数",  d:"概念梳理 + 例题",    tier:"core", min:45},
+    {s:"C/C++",     d:"编程练习",          tier:"core", min:60},
+    {s:"英语/四级", d:"听力 + 阅读",        tier:"eng",  min:60},
+    {s:"工程图学",  d:"画图 / 习题",        tier:"core", min:30}
   ],
   2:[
-    {t:"10:25–12:00", s:"英语/四级", d:"水课上看网课 / 听力",  tier:"eng",  min:90},
-    {t:"12:15–13:15", s:"线性代数",  d:"概念梳理 + 例题",          tier:"core", min:60},
-    {t:"13:30–15:30", s:"高等数学",  d:"刷题巩固",                tier:"core", min:120},
-    {t:"17:45–18:45", s:"工程图学",  d:"习题",                    tier:"core", min:60}
+    {s:"英语/四级", d:"网课 / 听力",        tier:"eng",  min:90},
+    {s:"线性代数",  d:"概念梳理 + 例题",    tier:"core", min:45},
+    {s:"高等数学",  d:"刷题",              tier:"core", min:90},
+    {s:"工程图学",  d:"习题",              tier:"core", min:45}
   ],
   3:[
-    {t:"08:30–10:30", s:"高等数学", d:"预习当天课 + 刷题（重点）", tier:"core", min:120},
-    {t:"10:45–11:45", s:"线性代数", d:"刷题",                     tier:"core", min:60},
-    {t:"12:00–13:00", s:"工程图学", d:"习题",                     tier:"core", min:60},
-    {t:"20:55–21:55", s:"剪辑课",   d:"学累了看课（调剂）",        tier:"edit", min:60}
+    {s:"高等数学",  d:"预习 + 刷题",        tier:"core", min:90},
+    {s:"线性代数",  d:"刷题",              tier:"core", min:45},
+    {s:"工程图学",  d:"习题",              tier:"core", min:45},
+    {s:"剪辑课",    d:"看课（调剂）",       tier:"edit", min:45}
   ],
   4:[
-    {t:"12:15–13:45", s:"高等数学",  d:"刷题",          tier:"core", min:90},
-    {t:"17:45–18:45", s:"英语/四级", d:"听力 + 单词",   tier:"eng",  min:60}
+    {s:"高等数学",  d:"刷题",              tier:"core", min:90},
+    {s:"英语/四级", d:"听力 + 单词",        tier:"eng",  min:45},
+    {s:"工程图学",  d:"习题",              tier:"core", min:45}
   ],
   5:[
-    {t:"10:25–12:00", s:"英语/四级", d:"水课上看网课 / 真题",  tier:"eng",  min:90},
-    {t:"12:15–13:45", s:"线性代数",  d:"刷题",                    tier:"core", min:90},
-    {t:"14:00–14:50", s:"工程图学",  d:"习题",                    tier:"core", min:50},
-    {t:"20:50–21:50", s:"高等数学",  d:"复习 + 预习（重点）",      tier:"core", min:60}
+    {s:"英语/四级", d:"网课 / 真题",        tier:"eng",  min:90},
+    {s:"线性代数",  d:"刷题",              tier:"core", min:60},
+    {s:"工程图学",  d:"习题",              tier:"core", min:45},
+    {s:"高等数学",  d:"复习 + 预习",        tier:"core", min:60}
   ],
   6:[
-    {t:"12:15–13:15", s:"英语/四级", d:"真题模拟 / 精听",          tier:"eng",  min:60},
-    {t:"14:00–15:35", s:"剪辑课",    d:"水课上看剪辑课",  tier:"edit", min:90},
-    {t:"18:00–20:00", s:"高等数学",  d:"刷题（重点）",             tier:"core", min:120}
+    {s:"英语/四级", d:"真题 / 精听",        tier:"eng",  min:60},
+    {s:"剪辑课",    d:"看课 + 实操",        tier:"edit", min:60},
+    {s:"高等数学",  d:"刷题",              tier:"core", min:90}
   ],
   7:[
-    {t:"08:30–10:00", s:"英语/四级", d:"真题 / 听力",      tier:"eng",  min:90},
-    {t:"10:15–11:45", s:"高等数学",  d:"本周查漏补缺",     tier:"core", min:90},
-    {t:"14:00–15:30", s:"线性代数",  d:"查漏补缺",         tier:"core", min:90},
-    {t:"15:45–17:15", s:"工程图学",  d:"查漏补缺",         tier:"core", min:90},
-    {t:"19:00–21:00", s:"剪辑课",   d:"整块学课 + 实操",   tier:"edit", min:120}
+    {s:"英语/四级", d:"真题 / 听力",        tier:"eng",  min:90},
+    {s:"高等数学",  d:"查漏补缺",           tier:"core", min:90},
+    {s:"线性代数",  d:"查漏补缺",           tier:"core", min:90},
+    {s:"工程图学",  d:"查漏补缺",           tier:"core", min:90},
+    {s:"剪辑课",    d:"整块学课 + 实操",    tier:"edit", min:60}
   ]
 };
 
@@ -993,6 +1100,22 @@ function remigratePlan(){
         if(hit){ sem.plan[wd] = reflowPlan(Number(wd), ds); changed = true; }
       });
       if(changed) saveJSON(SCHED_KEY, sched);
+    }
+    localStorage.setItem(MIG, "1");
+  } catch(e) {}
+}
+/* 一次性修正：把“定死时间”的旧计划换成“只给时长”的目标 */
+function migrateDurations(){
+  try {
+    const MIG = "study_sched_mig_v10";
+    if(localStorage.getItem(MIG)) return;
+    const sem = activeSem();
+    const hasTime = !!(sem && sem.plan && Object.values(sem.plan).some(l =>
+      (l || []).some(t => t.t)
+    ));
+    if(hasTime){
+      sem.plan = ensureTaskIds(clone(DEFAULT_PLAN));
+      saveJSON(SCHED_KEY, sched);
     }
     localStorage.setItem(MIG, "1");
   } catch(e) {}
@@ -1178,6 +1301,36 @@ function makeCard(deck, front, back){
 }
 const deckOf = c => c.deck || "默认";
 function isDue(c){ return c.due <= todayKey(); }
+
+/* ============================================================
+   经验值 / 等级（游戏化）
+   ============================================================ */
+function xpLevel(total){
+  // 每级门槛：Lv1 0，Lv2 100，Lv3 250，Lv4 450，之后每级 +250
+  if(total < 100) return {lv:1, cur:total, need:100};
+  if(total < 250) return {lv:2, cur:total-100, need:150};
+  if(total < 450) return {lv:3, cur:total-250, need:200};
+  const rest = total - 450;
+  const lv = 4 + Math.floor(rest / 250);
+  const cur = rest % 250;
+  return {lv, cur, need:250};
+}
+function saveXp(){ saveJSON(XP_KEY, xpState); }
+function addXp(n){
+  if(!n) return;
+  xpState.total += n;
+  const today = todayKey();
+  if(xpState.today.ds !== today){ xpState.today = { ds: today, gained: 0 }; }
+  xpState.today.gained += n;
+  saveXp();
+  renderXp();
+}
+function renderXp(){
+  const info = xpLevel(xpState.total || 0);
+  const el = $("#xpPill");
+  if(el) el.innerHTML = icon('bolt2') + (xpState.total||0) + ' <span class="xp-x">Lv.' + info.lv + '</span>';
+}
+
 function dueList(){
   return cards.filter(isDue).sort((a,b)=> a.due < b.due ? -1 : a.due > b.due ? 1 : 0);
 }
@@ -1239,7 +1392,7 @@ const isDone = (ds, wd, k) => !!(data[ds] && data[ds][taskKey(wd,k)]);
 function toggleTask(ds, wd, k){
   if(!data[ds]) data[ds] = {};
   const key = taskKey(wd,k);
-  if(data[ds][key]) delete data[ds][key]; else data[ds][key] = 1;
+  if(data[ds][key]) delete data[ds][key]; else { data[ds][key] = 1; addXp(10); }
   if(!Object.keys(data[ds]).length) delete data[ds];
   saveData();
 }
@@ -1486,14 +1639,15 @@ function buildToday(){
   $("#todayTasks").innerHTML = tasks.map((tk,i)=> taskRow(tk, ds, wd, i, false)).join("");
 
   const plan = planFor(wd);
-  const cfs = plan.map(t=> taskConflict(wd, t, ds)).filter(Boolean);
+  const total = plan.reduce((a,x)=> a + (x.min||0), 0);
   const warn = $("#planWarn");
+  const cls = classesFor(wd, ds);
   if(warn){
-    warn.innerHTML = cfs.length
-      ? '<div class="planwarn">' + icon('bolt') +
-        '<div><b>' + cfs.length + ' 个任务和课程冲突或太赶</b>' +
-        '<div class="tiny">重任务只进空档，英语/剪辑可放水课；点「重排」按课表算一遍</div></div>' +
-        '<button class="btn primary sm" data-fixplan="' + wd + '">重排</button></div>'
+    warn.innerHTML = total
+      ? '<div class="targetbar">' + icon('target') +
+        '<div><b>今日目标 ' + fmtMin(total) + '</b>' +
+        '<div class="tiny">' + (cls.length ? ('课表已排 ' + cls.length + ' 节，') : '') +
+        '时间自己安排，学够就算完成</div></div></div>'
       : "";
   }
 
@@ -1649,6 +1803,7 @@ function finishFocus(auto){
   if(!isDone(t.date, t.wd, t.key)) toggleTask(t.date, t.wd, t.key);
   addSession({ts:Date.now(), date:t.date, wd:t.wd, key:t.key, subject:t.subject,
               title:t.title, minutes:mins, mode:focus.mode});
+  addXp(Math.round(mins/5));  // 每 5 分钟专注 +1 EXP
   applyDone(t.date, t.wd, t.key);
   closeFocus();
   toast(auto ? ("专注完成，已自动打卡 · " + mins + " 分钟") : ("已记录 " + mins + " 分钟"));
@@ -1715,7 +1870,6 @@ function buildWeek(){
         ${edit ? `<div class="edit-acts">
             <button class="addtask" data-add-class="${wd}">${icon('plus')}添加课程</button>
             <button class="addtask" data-add-task="${wd}">${icon('plus')}添加任务</button>
-            <button class="addtask" data-reflow="${wd}">${icon('refresh')}按课表重排</button>
           </div>` : ""}
       </div></div>
     </div>`;
@@ -1828,7 +1982,7 @@ function openTaskForm(wd, id){
   const t = (id == null) ? {t:"",s:"",d:"",tier:"core",min:60} : (list.find(x=> x.id === id) || {});
   $("#formSheet").innerHTML =
     '<h3>' + (id==null ? "添加自习任务" : "编辑自习任务") + '</h3>' +
-    '<div class="field"><label>时间</label><input id="efTime" value="'+escHTML(t.t||"")+'" placeholder="例如：19:00–20:00"></div>' +
+    '<div class="field"><label>时间（可选，留空就只按目标时长）</label><input id="efTime" value="'+escHTML(t.t||"")+'" placeholder="可不填"></div>' +
     '<div class="field"><label>科目</label><input id="efSub" value="'+escHTML(t.s||"")+'" placeholder="例如：高等数学"></div>' +
     '<div class="field"><label>内容</label><input id="efDesc" value="'+escHTML(t.d||"")+'" placeholder="例如：第 3 章习题"></div>' +
     '<div class="field"><label>优先级</label><select id="efTier">' +
@@ -2141,6 +2295,11 @@ function deleteDate(id){
    Stats
    ============================================================ */
 function buildStats(){
+  const info = xpLevel(xpState.total || 0);
+  $("#lvBig").textContent = "Lv." + info.lv;
+  $("#lvCur").textContent = info.cur;
+  $("#lvNeed").textContent = info.need;
+  $("#lvFill").style.width = Math.min(100, Math.round(info.cur/info.need*100)) + "%";
   $("#stStreak").textContent = computeStreak();
   $("#stTotal").textContent = totalCompleted();
   $("#stWeek").textContent = weekStats().pct + "%";
@@ -2474,6 +2633,7 @@ function rateCard(r){
     }
   }else{
     sess.done++;
+    addXp(r === 3 ? 6 : (r === 2 ? 4 : 2));
   }
   sess.pos++;
   sess.revealed = false;
@@ -2835,8 +2995,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
   /* 先迁移旧课表，再渲染（失败也不影响主流程） */
   migrateSchedule();
   remigratePlan();
+  migrateDurations();
   /* icons */
   $("#markIcon").innerHTML = icon("check");
+  renderXp();
+  applyAccent(localStorage.getItem(ACCENT_KEY) || "forest");
+  renderSwatches();
   const tabs = $$("#tabbar .tab");
   const tabIcons = {today:"today", week:"week", review:"cards", stats:"stats", settings:"settings"};
   const tabNames = {today:"今日", week:"一周", review:"复习", stats:"统计", settings:"我的"};
@@ -2878,6 +3042,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
   });
   $("#darkSwitch").addEventListener("change", (e)=> applyTheme(e.target.checked ? "dark" : "light"));
+  $("#swatches").addEventListener("click", (e)=>{
+    const s = e.target.closest(".swatch");
+    if(s){ applyAccent(s.dataset.accent); toast("主题色已换成「" + (ACCENTS.find(a=>a.id===s.dataset.accent)||{}).name + "」"); }
+  });
 
   /* nav */
   tabs.forEach(tab=> tab.addEventListener("click", ()=> switchView(tab.dataset.view)));
